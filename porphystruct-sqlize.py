@@ -205,7 +205,8 @@ for an in analysis:
         res = decoded[json_Simulation][json_Result]
         data = {}
         if is_ext(decoded):
-            continue
+            for value in res:
+                data[ext_basis[value["Key"]]] = value["Value"]
         else:
             for value in res:
                 data[min_basis[value["Key"]]] = value["Value"]
