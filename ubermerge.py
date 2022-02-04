@@ -23,6 +23,9 @@ class MinAnalysis:
     pro: float
     doop_min: float
 
+    def __repr__(self) -> str:
+        return f"MIN: dom: {self.dom:.3f}, sad {self.sad:.3f}, ruf: {self.ruf:.3f}, wavx: {self.wavx:.3f}, wavy: {self.wavy:.3f}, pro: {self.pro:.3f}, Doop: {self.doop_min:.3f}"
+
 
 class ExtAnalysis:
     """Analysis result with extended basis"""
@@ -40,6 +43,9 @@ class ExtAnalysis:
     pro2: float
     doop_ext: float
 
+    def __repr__(self) -> str:
+        return f"EXT: dom1: {self.dom1:.3f}, dom2: {self.dom2:.3f}, sad1: {self.sad1:.3f}, sad2: {self.sad2:.3f}, ruf1: {self.ruf1:.3f}, ruf2: {self.ruf2:.3f}, wavx1: {self.wavx1:.3f}, wavx2: {self.wavx2:.3f}, wavy1: {self.wavy1:.3f}, wavy2: {self.wavy2:.3f}, pro1: {self.pro1:.3f}, pro2: {self.pro2:.3f}  Doop: {self.doop_ext:.3f}"
+
 
 class Row:
     ccdc: str
@@ -55,7 +61,7 @@ class Row:
     ext_analysis: ExtAnalysis
 
     def __repr__(self) -> str:
-        return f"Row: {self.ccdc} {self.min_analysis} {self.ext_analysis}"
+        return f"Row: {self.ccdc}\n\t{self.min_analysis}\n\t{self.ext_analysis}\n\n"
 
 
 analysis = []
@@ -136,3 +142,6 @@ for data in analysis:
                         row.ext_analysis)
         else:  # add new row
             rows[ccdc] = row
+
+
+print(rows[ccdc])
