@@ -110,9 +110,13 @@ for data in analysis:
             if suffixed in rows:  # if suffixed form is in list
                 if abs(rows[suffixed].doop_exp-doop_exp) < 1e-6:  # equal doop -> same analysis
                     if hasattr(rows[suffixed], 'ext_analysis'):  # has extended basis
+                        if hasattr(row, "ext_analysis"):
+                            print("something weird happened")
                         setattr(rows[suffixed], "min_analysis",
                                 row.min_analysis)
                     elif hasattr(rows[suffixed], 'min_analysis'):  # has extended basis
+                        if hasattr(row, "min_analysis"):
+                            print("something weird happened")
                         setattr(rows[suffixed], "ext_analysis",
                                 row.ext_analysis)
                     break
