@@ -1,4 +1,5 @@
 import json
+import os
 import typing
 
 
@@ -25,7 +26,9 @@ def get_element(symbol: str) -> Element:
 
 def periodic_table() -> typing.Dict[str, Element]:
     """returns complete periodic table as dictionary indexed by symbol"""
-    with open("elements.json", "r") as elements:
+    dir = os.path.dirname(__file__)
+
+    with open(dir+"/elements.json", "r") as elements:
         elements = json.load(elements)
         list = {}
         for element in elements:

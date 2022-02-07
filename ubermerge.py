@@ -1,12 +1,15 @@
 import fnmatch
 import json
 import os
+from re import M
 import string
-from tkinter.font import names
 import pandas as pd
-
+from data.element import periodic_table
 
 path = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\Übergangsmetalle"
+
+### WARNING: Special Folder Structure needed : Metal Center -> min / ext -> FILES!
+### Metal info is extracted from folder name!
 
 # region constants
 json_Simulation = "Simulation"
@@ -72,14 +75,26 @@ for root, dir, files in os.walk(path):
         analysis.append(os.path.join(root, file))
 
 rows = {}
+pse = periodic_table()
 for data in analysis:
     base: str = os.path.basename(data)
     parts = base.split("_")
     ccdc = parts[0]
+    group = 0
+    metal = ""
+
+    try:
+        metal = os.path.basename(os.path.abspath(
+            os.path.join(os.path.dirname(data), os.pardir)))
+        group = pse[metal].group
+    except:
+        pass
 
     doop_exp = 0.0
     row = Row()
     row.ccdc = ccdc
+    row.metal = metal
+    row.group = group
     with open(data, "r") as file:
         analysis = json.load(file)
         doop_exp = float(analysis[json_Doop]["Value"])
@@ -158,11 +173,10 @@ for row in rows:
                         row.ext_analysis.dom2, row.ext_analysis.sad1, row.ext_analysis.sad2, row.ext_analysis.ruf1, row.ext_analysis.ruf2,
                         row.ext_analysis.wavx1, row.ext_analysis.wavx2, row.ext_analysis.wavy1, row.ext_analysis.wavy2,
                         row.ext_analysis.pro1, row.ext_analysis.pro2, row.ext_analysis.doop_ext,
-                        abs(row.ext_analysis.doop_ext - row.doop_exp)/row.doop_exp)], 
+                        abs(row.ext_analysis.doop_ext - row.doop_exp)/row.doop_exp)],
                        columns=["CCDC", "M", "Group", "Ligand", "No_Subs", "Axial", "coord_no", "CoSolv", "Doop (exp.)",
                                 "dom", "sad", "ruf", "wav x", "wav y", "pro", "Doop (min)", "δoop (min) %",
                                 "dom 1", "dom 2", "sad 1", "sad 2", "ruf 1", "ruf 2", "wav x 1", "wav x 2",
                                 "wav y 1", "wav y 2", "pro 1", "pro 2", "Doop (ext)", "δoop (ext) %"])
-    df = pd.concat([df, new])
-
+    df = pd.concat([df, new], ignore_index=True)
 df.to_excel("out/ubermerged.xlsx")
