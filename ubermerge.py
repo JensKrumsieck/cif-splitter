@@ -1,3 +1,4 @@
+import argparse
 import fnmatch
 import json
 import os
@@ -6,10 +7,17 @@ import string
 import pandas as pd
 from data.element import periodic_table
 
-path = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\Übergangsmetalle"
+### ARGPARSE ###
+parser = argparse.ArgumentParser(prog='PorphyStruct UBERMERGE!')
+parser.add_argument("folder", help="Input folder path")
+args = parser.parse_args()
+####
 
-### WARNING: Special Folder Structure needed : Metal Center -> min / ext -> FILES!
-### Metal info is extracted from folder name!
+path = args.folder
+#path = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\Übergangsmetalle"
+
+# WARNING: Special Folder Structure needed : Metal Center -> min / ext -> FILES!
+# Metal info is extracted from folder name!
 
 # region constants
 json_Simulation = "Simulation"
@@ -166,14 +174,20 @@ df = pd.DataFrame(columns=["CCDC", "M", "Group", "Ligand", "No_Subs", "Axial", "
                            "wav y 1", "wav y 2", "pro 1", "pro 2", "Doop (ext)", "δoop (ext) %"])
 for row in rows:
     row: Row = rows[row]
+    le_doop_min = 0
+    le_doop_ext = 0
+    if row.doop_exp != 0:  # THIS CASE DOES EXIST!
+        le_doop_min = abs(row.min_analysis.doop_min -
+                          row.doop_exp) / row.doop_exp
+        le_doop_ext = abs(row.ext_analysis.doop_ext -
+                          row.doop_exp)/row.doop_exp
     new = pd.DataFrame([(row.ccdc, row.metal, row.group, row.ligand, row.substituents, row.axial, row.coord_no, row.co_solv, row.doop_exp,
-                        row.min_analysis.dom, row.min_analysis.sad, row.min_analysis.ruf, row.min_analysis.wavx, row.min_analysis.wavy,
-                        row.min_analysis.pro, row.min_analysis.doop_min, abs(
-                            row.min_analysis.doop_min - row.doop_exp) / row.doop_exp, row.ext_analysis.dom1,
-                        row.ext_analysis.dom2, row.ext_analysis.sad1, row.ext_analysis.sad2, row.ext_analysis.ruf1, row.ext_analysis.ruf2,
-                        row.ext_analysis.wavx1, row.ext_analysis.wavx2, row.ext_analysis.wavy1, row.ext_analysis.wavy2,
-                        row.ext_analysis.pro1, row.ext_analysis.pro2, row.ext_analysis.doop_ext,
-                        abs(row.ext_analysis.doop_ext - row.doop_exp)/row.doop_exp)],
+                         row.min_analysis.dom, row.min_analysis.sad, row.min_analysis.ruf, row.min_analysis.wavx, row.min_analysis.wavy,
+                         row.min_analysis.pro, row.min_analysis.doop_min, le_doop_min, row.ext_analysis.dom1,
+                         row.ext_analysis.dom2, row.ext_analysis.sad1, row.ext_analysis.sad2, row.ext_analysis.ruf1, row.ext_analysis.ruf2,
+                         row.ext_analysis.wavx1, row.ext_analysis.wavx2, row.ext_analysis.wavy1, row.ext_analysis.wavy2,
+                         row.ext_analysis.pro1, row.ext_analysis.pro2, row.ext_analysis.doop_ext,
+                         le_doop_ext)],
                        columns=["CCDC", "M", "Group", "Ligand", "No_Subs", "Axial", "Coord_No", "CoSolv", "Doop (exp.)",
                                 "dom", "sad", "ruf", "wav x", "wav y", "pro", "Doop (min)", "δoop (min) %",
                                 "dom 1", "dom 2", "sad 1", "sad 2", "ruf 1", "ruf 2", "wav x 1", "wav x 2",
