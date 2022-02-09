@@ -170,7 +170,7 @@ for data in analysis:
         else:  # add new row
             rows[ccdc] = row
 
-df = pd.DataFrame(columns=["CCDC", "M", "Group", "Ligand", "No_Subs", "Axial", "coord_no", "CoSolv", "Doop (exp.)",
+df = pd.DataFrame(columns=["CCDC", "M", "Group", "Ligand", "No_Subs", "Axial", "Coord_No", "CoSolv", "Doop (exp.)",
                            "dom", "sad", "ruf", "wav x", "wav y", "pro", "Doop (min)", "δoop (min) %",
                            "dom 1", "dom 2", "sad 1", "sad 2", "ruf 1", "ruf 2", "wav x 1", "wav x 2",
                            "wav y 1", "wav y 2", "pro 1", "pro 2", "Doop (ext)", "δoop (ext) %"])
