@@ -10,6 +10,8 @@ from data.element import periodic_table
 ### ARGPARSE ###
 parser = argparse.ArgumentParser(prog='PorphyStruct UBERMERGE!')
 parser.add_argument("folder", help="Input folder path")
+parser.add_argument(
+    "-o", "--output", help="output file name without extension")
 args = parser.parse_args()
 ####
 
@@ -193,4 +195,7 @@ for row in rows:
                                 "dom 1", "dom 2", "sad 1", "sad 2", "ruf 1", "ruf 2", "wav x 1", "wav x 2",
                                 "wav y 1", "wav y 2", "pro 1", "pro 2", "Doop (ext)", "δoop (ext) %"])
     df = pd.concat([df, new], ignore_index=True)
-df.to_excel("out/ubermerged.xlsx")
+if args.output == None:
+    df.to_excel("out/ubermerged.xlsx")
+else:
+    df.to_excel(f"out/{args.output}.xlsx")
