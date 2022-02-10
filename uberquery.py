@@ -1,6 +1,6 @@
 import pandas as pd
 
-### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS :) ###
+### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 
 # region CONSTANTS
 modes = ["dom", "sad", "ruf", "wav x", "wav y", "pro"]
