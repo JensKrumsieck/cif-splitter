@@ -31,7 +31,7 @@ def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_sele
             f"`Doop (exp.)` >= {start} and `Doop (exp.)` < {range}")[selector]
         bin_analysis = pd.DataFrame(bin.mean()).T
         bin_analysis["range"] = f"[{start, {range}}]"
-        bin_analysis["structures"] = bin_analysis.size
+        bin_analysis["structures"] = bin.shape[0]
         newDF = pd.concat([newDF, bin_analysis])
         start = range  # set end to start
     return newDF
