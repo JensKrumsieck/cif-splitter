@@ -52,6 +52,7 @@ def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str, selector: l
 
 
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
+### UBERMERGE.py RESULTS CAN BE USED, YOU NEED TO ENTER LIGAND,AXIAL,... INFO BY HAND! ###
 paths = [r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx"]
