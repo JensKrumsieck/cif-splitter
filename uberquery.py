@@ -1,25 +1,51 @@
+from pickle import BINUNICODE
+import numpy as np
 import pandas as pd
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 
 # region CONSTANTS
 modes = ["dom", "sad", "ruf", "wav x", "wav y", "pro"]
+ext_modes = ["dom 1", "sad 1", "ruf 1", "wav x 1", "wav y 1", "pro 1",
+             "dom 2", "sad 2", "ruf 2", "wav x 2", "wav y 2", "pro 2"]
 perc_comp = []
 for mode in modes:
     perc_comp.append(mode + " comp %")
 perc_comp = list(perc_comp)
-
 perc_selector = perc_comp + list(["Doop (exp.)"])
+
+perc_ext = []
+for mode in ext_modes:
+    perc_ext.append(mode + " %")
+perc_ext_selector = perc_ext + list(["Doop (exp.)"])
 # endregion
 
 # region functions
 
 
-def groupAnalysis(dataFrame: pd.DataFrame, by: str) -> pd.DataFrame:
-    grouped = dataFrame.groupby(by)[perc_selector]
+def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_selector) -> pd.DataFrame:
+    start = 0
+    newDF = pd.DataFrame()
+    for range in ranges:
+        bin = dataFrame.query(
+            f"`Doop (exp.)` >= {start} and `Doop (exp.)` < {range}")[selector]
+        bin_analysis = pd.DataFrame(bin.mean()).T
+        bin_analysis["range"] = f"[{start, {range}}]"
+        newDF = pd.concat([newDF, bin_analysis])
+        start = range  # set end to start
+    return newDF
+
+
+def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_selector) -> pd.DataFrame:
+    grouped = dataFrame.groupby(by)[selector]
     mean_grouped = grouped.mean()
     mean_grouped["structures"] = grouped.size().values
     return mean_grouped
+
+
+def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str, selector: list = perc_selector) -> pd.DataFrame:
+    bins = doopRanger(dataFrame, doopRanges, selector)
+    return groupAnalysis(bins, by, selector)
 # endregion
 
 
@@ -37,6 +63,16 @@ sum = df["dom comp"] + df["sad comp"] + df["ruf comp"] + \
     df["wav x comp"] + df["wav y comp"] + df["pro comp"]
 for mode in modes:
     df[mode + " comp %"] = df[mode + " comp"] / sum
+
+sum_ext = df["dom 1"].abs() + df["dom 2"].abs() + \
+    df["sad 1"].abs() + df["sad 2"].abs() + \
+    df["ruf 1"].abs() + df["ruf 2"].abs() + \
+    df["wav x 1"].abs() + df["wav x 2"].abs() + \
+    df["wav y 1"].abs() + df["wav y 2"].abs() + \
+    df["pro 1"].abs() + df["pro 2"].abs()
+for mode in ext_modes:
+    df[mode + " %"] = df[mode].abs()/sum
+
 ### MAINGROUP ###
 nonLa = df.query("Group != 'Ln'")
 mainGroup = nonLa.query("Group < 3 or Group > 12")
@@ -114,4 +150,11 @@ groupAnalysis(IronCorroles, "Ligand").to_excel(
     "out/transition_iron_ligands.xlsx")
 groupAnalysis(IronCorroles, "Coord_No").to_excel(
     "out/transition_iron_coordNo.xlsx")
+# endregion
+
+# region copper corroles extended basis
+CopperCorroles = transition.query("M == 'Cu'")
+ranges = [.4, .5, 1, 1000]
+doopAnalysis(CopperCorroles, ranges, "range", perc_ext_selector).to_excel(
+    "out/transition_copper_doop.xlsx")
 # endregion
