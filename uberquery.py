@@ -31,21 +31,23 @@ def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_sele
             f"`Doop (exp.)` >= {start} and `Doop (exp.)` < {range}")[selector]
         bin_analysis = pd.DataFrame(bin.mean()).T
         bin_analysis["range"] = f"[{start, {range}}]"
+        bin_analysis["structures"] = bin_analysis.size
         newDF = pd.concat([newDF, bin_analysis])
         start = range  # set end to start
     return newDF
 
 
-def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_selector) -> pd.DataFrame:
+def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_selector, create_sizes: bool = True) -> pd.DataFrame:
     grouped = dataFrame.groupby(by)[selector]
     mean_grouped = grouped.mean()
-    mean_grouped["structures"] = grouped.size().values
+    if create_sizes:
+        mean_grouped["structures"] = grouped.size().values
     return mean_grouped
 
 
 def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str, selector: list = perc_selector) -> pd.DataFrame:
     bins = doopRanger(dataFrame, doopRanges, selector)
-    return groupAnalysis(bins, by, selector)
+    return groupAnalysis(bins, by, selector + ["structures"], False)
 # endregion
 
 
