@@ -1,5 +1,3 @@
-from pickle import BINUNICODE
-import numpy as np
 import pandas as pd
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
@@ -40,6 +38,12 @@ def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_sele
 def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_selector, create_sizes: bool = True) -> pd.DataFrame:
     grouped = dataFrame.groupby(by)[selector]
     mean_grouped = grouped.mean()
+    for sel in selector:
+        sel: str = sel
+        if "Doop" in sel:
+            continue
+        mean_grouped[sel.replace('%', ' ').strip(
+        )] = mean_grouped[sel] * mean_grouped["Doop (exp.)"]
     if create_sizes:
         mean_grouped["structures"] = grouped.size().values
     return mean_grouped
