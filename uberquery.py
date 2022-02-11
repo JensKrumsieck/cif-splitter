@@ -45,7 +45,7 @@ def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_select
     return mean_grouped
 
 
-def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str, selector: list = perc_selector) -> pd.DataFrame:
+def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
     bins = doopRanger(dataFrame, doopRanges, selector)
     return groupAnalysis(bins, by, selector + ["structures"], False)
 # endregion
@@ -90,6 +90,8 @@ assert len(transition) + len(mainGroup) + \
 
 # groupwise all
 groupAnalysis(df, "Group").to_excel("out/all_overview.xlsx")
+# substituents all
+groupAnalysis(df, "No_Subs").to_excel("out/all_substituents.xlsx")
 # ligands all
 groupAnalysis(df, "Ligand").to_excel("out/all_ligands.xlsx")
 # maingroup by CN
@@ -97,32 +99,28 @@ groupAnalysis(mainGroup, "Coord_No").to_excel("out/maingroup_coordNo.xlsx")
 # groupwise transition
 groupAnalysis(pd.concat([transition, lanthanoids]),
               "Group").to_excel("out/transition_overview.xlsx")
+# transition by substituents
+groupAnalysis(pd.concat([transition, lanthanoids]), "No_Subs").to_excel(
+    "out/transition_substituents.xlsx")
 # transition by CN
-groupAnalysis(mainGroup, "Coord_No").to_excel("out/transition_coordNo.xlsx")
+groupAnalysis(pd.concat([transition, lanthanoids]),
+              "Coord_No").to_excel("out/transition_coordNo.xlsx")
 # group 4-5 by Metal
 groupAnalysis(transition.query("Group == 4 or Group == 5"),
               "M").to_excel("out/transition_g4g5_metals.xlsx")
-# group 6 by metal
-groupAnalysis(transition.query("Group == 6"), "M").to_excel(
-    "out/transition_g6_metals.xlsx")
-# group 7 by metal
-groupAnalysis(transition.query("Group == 7"), "M").to_excel(
-    "out/transition_g7_metals.xlsx")
-# group 8 by metal
-groupAnalysis(transition.query("Group == 8"), "M").to_excel(
-    "out/transition_g8_metals.xlsx")
-# group 9 by metal
-groupAnalysis(transition.query("Group == 9"), "M").to_excel(
-    "out/transition_g9_metals.xlsx")
-# group 10 by metal
-groupAnalysis(transition.query("Group == 10"), "M").to_excel(
-    "out/transition_g10_metals.xlsx")
-# group 11 by metal
-groupAnalysis(transition.query("Group == 11"), "M").to_excel(
-    "out/transition_g11_metals.xlsx")
-# group 12 by metal
-groupAnalysis(transition.query("Group == 12"), "M").to_excel(
-    "out/transition_g12_metals.xlsx")
+# loop other groups
+groups = [6, 7, 8, 9, 10, 11, 12]
+for group in groups:
+    # group by metal
+    group_dataset = transition.query(f"Group == {group}")
+    groupAnalysis(group_dataset, "M").to_excel(
+        f"out/transition_g{group}_metals.xlsx")
+    # group by doop
+    doopAnalysis(group_dataset, [.2, .4, .6, 1, 10000]).to_excel(
+        f"out/transition_g{group}_doop.xlsx")
+    # group by coord number
+    groupAnalysis(group_dataset, "Coord_No").to_excel(
+        f"out/transition_g{group}_coordNo.xlsx")
 
 # region SELECTED MAINGROUP COMPLEXES
 mgcn4 = mainGroup.query("Coord_No == 4")
@@ -141,13 +139,7 @@ sel_comp["structures"] = lens
 sel_comp.to_excel("out/maingroup_selectedMetals.xlsx")
 # endregion
 
-# region pFTPCMn by Ligand
-MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
-groupAnalysis(MnpFTPC, "Axial").to_excel(
-    "out/transition_mnpftpc_axial.xlsx")
-# endregion
-
-# region FeTPC vs FepFTPC and CN
+# region Iron Corroles
 IronCorroles = transition.query("M == 'Fe'")
 groupAnalysis(IronCorroles, "Ligand").to_excel(
     "out/transition_iron_ligands.xlsx")
@@ -155,9 +147,34 @@ groupAnalysis(IronCorroles, "Coord_No").to_excel(
     "out/transition_iron_coordNo.xlsx")
 # endregion
 
-# region copper corroles extended basis
+# region copper corroles
 CopperCorroles = transition.query("M == 'Cu'")
-ranges = [.4, .5, 1, 1000]
+ranges = [.5, .7, 1, 1000]
 doopAnalysis(CopperCorroles, ranges, "range", perc_ext_selector).to_excel(
     "out/transition_copper_doop.xlsx")
+# endregion
+
+# region cobalt corroles
+CobaltCorroles = transition.query("M == 'Co'")
+groupAnalysis(CobaltCorroles, "Coord_No").to_excel(
+    "out/transition_cobalt_coordNo.xlsx")
+# endregion
+
+# region manganese corroles
+ManganeseCorroles = transition.query("M == 'Mn'")
+NeutralLigands = ["OPPh3", "H2O", "DMF", "Ph", "EtOH", "Br-Ph", "MeOH"]
+NeutralMnCors = ManganeseCorroles.query(
+    "Coord_No > 4").query("Axial.isin(@NeutralLigands)")
+AnionicMnCors = ManganeseCorroles.query(
+    "Coord_No > 4").query("~Axial.isin(@NeutralLigands)")
+NeutralAnalysis = groupAnalysis(NeutralMnCors, "M")
+NeutralAnalysis["title"] = "Neutral Ligands"
+AnionicAnalysis = groupAnalysis(AnionicMnCors, "M")
+AnionicAnalysis["title"] = "Anionic Ligands"
+pd.concat([NeutralAnalysis, AnionicAnalysis]).to_excel(
+    "out/transition_manganese_axial.xlsx")
+
+MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
+groupAnalysis(MnpFTPC, "Axial").to_excel(
+    "out/transition_mnpftpc_axial.xlsx")
 # endregion
