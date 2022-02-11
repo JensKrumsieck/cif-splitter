@@ -46,12 +46,15 @@ def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_select
         )] = mean_grouped[sel] * mean_grouped["Doop (exp.)"]
     if create_sizes:
         mean_grouped["structures"] = grouped.size().values
+    else:
+        mean_grouped["structures"] = pd.Series(dataFrame["structures"]).tolist()
     return mean_grouped
 
 
 def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
     bins = doopRanger(dataFrame, doopRanges, selector)
-    return groupAnalysis(bins, by, selector + ["structures"], False)
+    res = groupAnalysis(bins, by, selector, False)
+    return res
 # endregion
 
 
