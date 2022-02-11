@@ -100,9 +100,15 @@ groupAnalysis(df, "No_Subs").to_excel("out/all_substituents.xlsx")
 groupAnalysis(df, "Ligand").to_excel("out/all_ligands.xlsx")
 # maingroup by CN
 groupAnalysis(mainGroup, "Coord_No").to_excel("out/maingroup_coordNo.xlsx")
+# maingroup doop
+doopAnalysis(mainGroup, [.2, .4, .6, 1, 1000]
+             ).to_excel("out/maingroup_doop.xlsx")
 # groupwise transition
 groupAnalysis(pd.concat([transition, lanthanoids]),
               "Group").to_excel("out/transition_overview.xlsx")
+# transition doop
+doopAnalysis(pd.concat([transition, lanthanoids]),
+             [.2, .4, .6, 1, 1000]).to_excel("out/transition_doop.xlsx")
 # transition by substituents
 groupAnalysis(pd.concat([transition, lanthanoids]), "No_Subs").to_excel(
     "out/transition_substituents.xlsx")
