@@ -192,3 +192,17 @@ MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
 groupAnalysis(MnpFTPC, "Axial").to_excel(
     "out/transition_mnpftpc_axial.xlsx")
 # endregion
+
+# region 3d/4d/5d
+m3d = ["Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn"]
+m4d = ["Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd"]
+m5d = ["La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]
+d3compl = transition.query("M.isin(@m3d)")
+d4compl = transition.query("M.isin(@m4d)")
+d5compl = transition.query("M.isin(@m5d)")
+d3compl["title"] = "3D"
+d4compl["title"] = "4D"
+d5compl["title"] = "5D"
+groupAnalysis(pd.concat([d3compl, d4compl, d5compl]),
+              "title").to_excel("out/transition_dwise.xlsx")
+# endregion
