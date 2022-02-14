@@ -100,6 +100,8 @@ groupAnalysis(df, "Group").to_excel("out/all_overview.xlsx")
 groupAnalysis(df, "No_Subs").to_excel("out/all_substituents.xlsx")
 # ligands all
 groupAnalysis(df, "Ligand").to_excel("out/all_ligands.xlsx")
+# coord no all
+groupAnalysis(df, "Coord_No").to_excel("out/all_coordNo.xlsx")
 # maingroup by CN
 groupAnalysis(mainGroup, "Coord_No").to_excel("out/maingroup_coordNo.xlsx")
 # maingroup doop
