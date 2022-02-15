@@ -1,87 +1,15 @@
 import pandas as pd
+from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
+from util.merge import merge
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
-
-# region CONSTANTS
-modes = ["dom", "sad", "ruf", "wav x", "wav y", "pro"]
-ext_modes = ["dom 1", "sad 1", "ruf 1", "wav x 1", "wav y 1", "pro 1",
-             "dom 2", "sad 2", "ruf 2", "wav x 2", "wav y 2", "pro 2"]
-perc_comp = []
-for mode in modes:
-    perc_comp.append(mode + " comp %")
-perc_comp = list(perc_comp)
-perc_selector = perc_comp + list(["Doop (exp.)"])
-
-perc_ext = []
-for mode in ext_modes:
-    perc_ext.append(mode + " %")
-perc_ext_selector = perc_ext + list(["Doop (exp.)"])
-# endregion
-
-# region functions
-
-
-def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_selector) -> pd.DataFrame:
-    start = 0
-    newDF = pd.DataFrame()
-    for range in ranges:
-        bin = dataFrame.query(
-            f"`Doop (exp.)` >= {start} and `Doop (exp.)` < {range}")[selector]
-        bin_analysis = pd.DataFrame(bin.mean()).T
-        bin_analysis["range"] = f"[{start, {range}}]"
-        bin_analysis["structures"] = bin.shape[0]
-        newDF = pd.concat([newDF, bin_analysis])
-        start = range  # set end to start
-    return newDF
-
-
-def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_selector, create_sizes: bool = True) -> pd.DataFrame:
-    grouped = dataFrame.groupby(by)[selector]
-    mean_grouped = grouped.mean()
-    for sel in selector:
-        sel: str = sel
-        if "Doop" in sel:
-            continue
-        mean_grouped[sel.replace('%', ' ').strip(
-        )] = mean_grouped[sel] * mean_grouped["Doop (exp.)"]
-    if create_sizes:
-        mean_grouped["structures"] = grouped.size().values
-    return mean_grouped
-
-
-def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
-    bins = doopRanger(dataFrame, doopRanges, selector)
-    res = groupAnalysis(bins, by, selector, False)
-    res["structures"] = pd.Series(bins["structures"]).tolist()
-    return res
-# endregion
-
-
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
 ### UBERMERGE.py RESULTS CAN BE USED, YOU NEED TO ENTER LIGAND,AXIAL,... INFO BY HAND! ###
 paths = [r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx"]
 
-df = pd.DataFrame()
-for path in paths:
-    df = pd.concat([df, pd.read_excel(path)], ignore_index=True)
-
-# DataFrame contains all data now!, add percentage cols
-sum = df["dom comp"] + df["sad comp"] + df["ruf comp"] + \
-    df["wav x comp"] + df["wav y comp"] + df["pro comp"]
-for mode in modes:
-    df[mode + " comp %"] = df[mode + " comp"] / sum
-
-sum_ext = df["dom 1"].abs() + df["dom 2"].abs() + \
-    df["sad 1"].abs() + df["sad 2"].abs() + \
-    df["ruf 1"].abs() + df["ruf 2"].abs() + \
-    df["wav x 1"].abs() + df["wav x 2"].abs() + \
-    df["wav y 1"].abs() + df["wav y 2"].abs() + \
-    df["pro 1"].abs() + df["pro 2"].abs()
-for mode in ext_modes:
-    df[mode + " %"] = df[mode].abs()/sum
-
+df = merge(paths)
 ### MAINGROUP ###
 nonLa = df.query("Group != 'Ln'")
 mainGroup = nonLa.query("Group < 3 or Group > 12")
