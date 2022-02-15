@@ -4,6 +4,7 @@ from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_s
 from util.element import df_periodic_table
 from util.merge import merge
 from util.scatterpie import make_scatter_pie
+from util.stackedbar import stackedbar
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
@@ -141,3 +142,9 @@ big_df = merge(paths + freeBases)
 plt.style.use(['science', 'nature', 'no-latex'])
 fig, ax = make_scatter_pie(big_df)
 plt.savefig("out/periodic.svg", dpi=1000)
+
+fig, ax = stackedbar(groupAnalysis(mainGroup, "Coord_No"), "Koordinationszahl")
+plt.savefig("out/maincoord.svg", dpi=2000)
+
+fig, ax = stackedbar(groupAnalysis(df, "Group"), "Gruppe", False, True)
+plt.savefig("out/group.svg", dpi=2000)

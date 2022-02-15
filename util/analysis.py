@@ -14,6 +14,10 @@ perc_ext = []
 for mode in ext_modes:
     perc_ext.append(mode + " %")
 perc_ext_selector = perc_ext + list(["Doop (exp.)"])
+
+plot_selector = []
+for mode in modes:
+    plot_selector.append(mode + " comp")
 # endregion
 
 

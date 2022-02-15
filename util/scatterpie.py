@@ -24,7 +24,7 @@ def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax
 
 
 def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
-    fig, ax = plt.subplots(1, figsize=(8, 4))
+    fig, ax = plt.subplots(1, figsize=(8, 5))
     plt.box(False)
     ax.set(xlim=(0.25, 18.75), ylim=(9.75, .25))
     plt.xticks(range(1, 19))
