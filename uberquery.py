@@ -1,6 +1,9 @@
+from matplotlib import figure, pyplot as plt
 import pandas as pd
 from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
+from util.element import df_periodic_table
 from util.merge import merge
+from util.scatterpie import make_scatter_pie
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
@@ -8,14 +11,13 @@ from util.merge import merge
 paths = [r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
          r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx"]
+freeBases = [
+    r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\FreeBases.xlsx"]
 
 df = merge(paths)
-### MAINGROUP ###
 nonLa = df.query("Group != 'Ln'")
 mainGroup = nonLa.query("Group < 3 or Group > 12")
-### LANTHANOIDS ###
 lanthanoids = df.query("Group == 'Ln'")
-### TRANSITION METALS ###
 transition = nonLa.query("Group > 3 and Group < 13")
 
 # sanity check
@@ -134,3 +136,8 @@ d5compl["title"] = "5D"
 groupAnalysis(pd.concat([d3compl, d4compl, d5compl]),
               "title").to_excel("out/transition_dwise.xlsx")
 # endregion
+
+big_df = merge(paths + freeBases)
+plt.style.use(['science', 'nature', 'no-latex'])
+fig, ax = make_scatter_pie(big_df)
+plt.savefig("out/periodic.svg", dpi=1000)

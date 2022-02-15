@@ -5,7 +5,7 @@ import os
 from re import M
 import string
 import pandas as pd
-from data.element import periodic_table
+from util.element import periodic_table
 
 ### ARGPARSE ###
 parser = argparse.ArgumentParser(prog='PorphyStruct UBERMERGE!')
