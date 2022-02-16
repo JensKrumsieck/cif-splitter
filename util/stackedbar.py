@@ -30,7 +30,10 @@ def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_lege
     ax.set_ylabel(doop_axis_label)
     ax.set_xlabel(x_label)
     max_doop = df["Doop (exp.)"].max()
+    ax.set(ylim=(0, max_doop + max_doop * .1))
     offset = -.02
+    if print_no:
+        ax.set_title("$\it{Anzahl}$ $\it{Strukturen}$", y=1.0, pad=-10)
     for idx, c in enumerate(ax.containers):
         if print_no and idx == len(ax.containers)-1:
             ax.bar_label(c, labels=[df["structures"].iloc[idv]

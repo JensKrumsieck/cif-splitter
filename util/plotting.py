@@ -3,6 +3,7 @@ import pandas as pd
 
 from util.analysis import CoordNo_Grouper, groupAnalysis
 from util.stackedbar import stackedbar
+from util.analysis import perc_selector
 
 x_axis_labels = {
     "Coord_No": "Koordinationszahl",
@@ -26,6 +27,7 @@ def cm_to_inch(value):
 
 def export_with_stackedbars(df: pd.DataFrame, by: str, filenameWithoutExtension: str, print_no: bool = True, print_legend: bool = False):
     current = groupAnalysis(df, by)
+    
     if by == "Coord_No":
         stackedbar(CoordNo_Grouper(df),
                    x_axis_labels[by], print_no, print_legend)

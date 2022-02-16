@@ -1,10 +1,9 @@
 from matplotlib import pyplot as plt
 import pandas as pd
-from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
+from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
 from util.merge import merge
-from util.plotting import cm_to_inch, export, export_with_stackedbars, save_plot
+from util.plotting import cm_to_inch,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
-from util.stackedbar import stackedbar
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
@@ -31,14 +30,14 @@ plt.style.use(['science', 'nature', 'no-latex'])
 plt.rcParams["figure.figsize"] = (cm_to_inch(16), cm_to_inch(13))
 plt.rcParams["figure.dpi"] = 1200
 plt.rcParams["axes.labelsize"] = 10
-plt.rcParams["axes.titlesize"] = 12
+plt.rcParams["axes.titlesize"] = 8
 plt.rcParams["xtick.labelsize"] = 8
 plt.rcParams["ytick.labelsize"] = 8
 
 # groupwise all
 export_with_stackedbars(df, "Group", "all_overview", False, True)
 # substituents all
-export_with_stackedbars(df, "No_Subs", "all_substituents", False, True)
+export_with_stackedbars(df, "No_Subs", "all_substituents", True, True)
 # ligands all, no plot
 groupAnalysis(df, "Ligand").to_excel("out/all_ligands.xlsx")
 # coord no all
@@ -125,9 +124,12 @@ AnionicMnCors = ManganeseCorroles.query(
     "Coord_No > 4").query("~Axial.isin(@NeutralLigands)")
 NeutralAnalysis = groupAnalysis(NeutralMnCors, "M")
 NeutralAnalysis["title"] = "Neutral Ligands"
+count_n = NeutralMnCors.shape[0]
 AnionicAnalysis = groupAnalysis(AnionicMnCors, "M")
 AnionicAnalysis["title"] = "Anionic Ligands"
+count_a = AnionicMnCors.shape[0]
 Ligands = pd.concat([NeutralAnalysis, AnionicAnalysis])
+Ligands["structures"] = [count_n, count_a]
 export_with_stackedbars(Ligands, "title", "transition_manganese_axial", False)
 
 MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
