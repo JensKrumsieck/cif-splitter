@@ -133,7 +133,7 @@ Ligands["structures"] = [count_n, count_a]
 export_with_stackedbars(Ligands, "title", "transition_manganese_axial", False)
 
 MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
-export_with_stackedbars(MnpFTPC, "Axial", "transition_mnpftpc_axial", False)
+export_with_stackedbars(MnpFTPC, "Axial", "transition_mnpftpc_axial", False, True)
 # endregion
 
 # region 3d/4d/5d
