@@ -1,8 +1,8 @@
-from matplotlib import figure, pyplot as plt
+from matplotlib import pyplot as plt
 import pandas as pd
-from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
-from util.element import df_periodic_table
+from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
 from util.merge import merge
+from util.plotting import cm_to_inch, export, export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 from util.stackedbar import stackedbar
 
@@ -20,76 +20,87 @@ nonLa = df.query("Group != 'Ln'")
 mainGroup = nonLa.query("Group < 3 or Group > 12")
 lanthanoids = df.query("Group == 'Ln'")
 transition = nonLa.query("Group > 3 and Group < 13")
+transitionAndLn = pd.concat([transition, lanthanoids])
 
 # sanity check
 assert len(transition) + len(mainGroup) + \
     len(lanthanoids) == len(df), "Oh no something is missing!"
 
+# plot styles
+plt.style.use(['science', 'nature', 'no-latex'])
+plt.rcParams["figure.figsize"] = (cm_to_inch(16), cm_to_inch(13))
+plt.rcParams["figure.dpi"] = 1200
+plt.rcParams["axes.labelsize"] = 10
+plt.rcParams["axes.titlesize"] = 12
+plt.rcParams["xtick.labelsize"] = 8
+plt.rcParams["ytick.labelsize"] = 8
+
 # groupwise all
-groupAnalysis(df, "Group").to_excel("out/all_overview.xlsx")
+export_with_stackedbars(df, "Group", "all_overview", False, True)
 # substituents all
-groupAnalysis(df, "No_Subs").to_excel("out/all_substituents.xlsx")
-# ligands all
+export_with_stackedbars(df, "No_Subs", "all_substituents", False, True)
+# ligands all, no plot
 groupAnalysis(df, "Ligand").to_excel("out/all_ligands.xlsx")
 # coord no all
-groupAnalysis(df, "Coord_No").to_excel("out/all_coordNo.xlsx")
+export_with_stackedbars(df, "Coord_No", "all_coordNo")
+
 # maingroup by CN
-groupAnalysis(mainGroup, "Coord_No").to_excel("out/maingroup_coordNo.xlsx")
+export_with_stackedbars(mainGroup, "Coord_No", "maingroup_coordNo")
 # maingroup doop
 doopAnalysis(mainGroup, [.2, .4, .6, 1, 1000]
              ).to_excel("out/maingroup_doop.xlsx")
 # groupwise transition
-groupAnalysis(pd.concat([transition, lanthanoids]),
-              "Group").to_excel("out/transition_overview.xlsx")
+export_with_stackedbars(transitionAndLn, "Group",
+                        "transition_overview", True, True)
+
 # transition doop
-doopAnalysis(pd.concat([transition, lanthanoids]),
+doopAnalysis(transitionAndLn,
              [.2, .4, .6, 1, 1000]).to_excel("out/transition_doop.xlsx")
 # transition by substituents
-groupAnalysis(pd.concat([transition, lanthanoids]), "No_Subs").to_excel(
-    "out/transition_substituents.xlsx")
+export_with_stackedbars(transitionAndLn, "No_Subs",
+                        "transition_substituents", True, True)
 # transition by CN
-groupAnalysis(pd.concat([transition, lanthanoids]),
-              "Coord_No").to_excel("out/transition_coordNo.xlsx")
+export_with_stackedbars(transitionAndLn, "Coord_No", "transition_coordNo")
+
 # group 4-5 by Metal
-groupAnalysis(transition.query("Group == 4 or Group == 5"),
-              "M").to_excel("out/transition_g4g5_metals.xlsx")
+export_with_stackedbars(transition.query(
+    "Group == 4 or Group == 5"), "M", "transition_g4g5_metals")
+
 # loop other groups
 groups = [6, 7, 8, 9, 10, 11, 12]
 for group in groups:
     # group by metal
     group_dataset = transition.query(f"Group == {group}")
-    groupAnalysis(group_dataset, "M").to_excel(
-        f"out/transition_g{group}_metals.xlsx")
+
+    export_with_stackedbars(group_dataset, "M", f"transition_g{group}_metals")
+
     # group by doop
     doopAnalysis(group_dataset, [.2, .4, .6, 1, 10000]).to_excel(
         f"out/transition_g{group}_doop.xlsx")
     # group by coord number
-    groupAnalysis(group_dataset, "Coord_No").to_excel(
-        f"out/transition_g{group}_coordNo.xlsx")
+    export_with_stackedbars(group_dataset, "Coord_No",
+                            f"transition_g{group}_coordNo")
 
 # region SELECTED MAINGROUP COMPLEXES
 mgcn4 = mainGroup.query("Coord_No == 4")
 mgcn5 = mainGroup.query("Coord_No == 5")
 mgcn6 = mainGroup.query("Coord_No == 6")
 phos_6c = mgcn6.query("M == 'P'")[perc_selector].mean()
+phos_6c["M"] = "P"
 gall_6c = mgcn6.query("M == 'Ga'")[perc_selector].mean()
+gall_6c["M"] = "Ga"
 germ_5c = mgcn5.query("M == 'Ge'")[perc_selector].mean()
+germ_5c["M"] = "Ge"
 tin_5c = mgcn5.query("M == 'Sn'")[perc_selector].mean()
-metals = ["P", "Ga", "Ge", "Sn"]
-lens = [len(mgcn6.query("M == 'P'")), len(mgcn6.query("M == 'Ga'")),
-        len(mgcn5.query("M == 'Ge'")), len(mgcn5.query("M == 'Sn'"))]
+tin_5c["M"] = "Sn"
 sel_comp = pd.DataFrame([phos_6c, gall_6c, germ_5c, tin_5c])
-sel_comp["M"] = metals
-sel_comp["structures"] = lens
-sel_comp.to_excel("out/maingroup_selectedMetals.xlsx")
+export_with_stackedbars(sel_comp, "M", "maingroup_selectedMetals", False)
 # endregion
 
 # region Iron Corroles
 IronCorroles = transition.query("M == 'Fe'")
-groupAnalysis(IronCorroles, "Ligand").to_excel(
-    "out/transition_iron_ligands.xlsx")
-groupAnalysis(IronCorroles, "Coord_No").to_excel(
-    "out/transition_iron_coordNo.xlsx")
+export_with_stackedbars(IronCorroles, "Ligand", "transition_iron_ligands")
+export_with_stackedbars(IronCorroles, "Coord_No", "transition_iron_coordNo")
 # endregion
 
 # region copper corroles
@@ -101,8 +112,8 @@ doopAnalysis(CopperCorroles, ranges, "range", perc_ext_selector).to_excel(
 
 # region cobalt corroles
 CobaltCorroles = transition.query("M == 'Co'")
-groupAnalysis(CobaltCorroles, "Coord_No").to_excel(
-    "out/transition_cobalt_coordNo.xlsx")
+export_with_stackedbars(CobaltCorroles, "Coord_No",
+                        "transition_cobalt_coordNo")
 # endregion
 
 # region manganese corroles
@@ -116,12 +127,11 @@ NeutralAnalysis = groupAnalysis(NeutralMnCors, "M")
 NeutralAnalysis["title"] = "Neutral Ligands"
 AnionicAnalysis = groupAnalysis(AnionicMnCors, "M")
 AnionicAnalysis["title"] = "Anionic Ligands"
-pd.concat([NeutralAnalysis, AnionicAnalysis]).to_excel(
-    "out/transition_manganese_axial.xlsx")
+Ligands = pd.concat([NeutralAnalysis, AnionicAnalysis])
+export_with_stackedbars(Ligands, "title", "transition_manganese_axial", False)
 
 MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
-groupAnalysis(MnpFTPC, "Axial").to_excel(
-    "out/transition_mnpftpc_axial.xlsx")
+export_with_stackedbars(MnpFTPC, "Axial", "transition_mnpftpc_axial", False)
 # endregion
 
 # region 3d/4d/5d
@@ -134,17 +144,11 @@ d5compl = transition.query("M.isin(@m5d)")
 d3compl["title"] = "3D"
 d4compl["title"] = "4D"
 d5compl["title"] = "5D"
-groupAnalysis(pd.concat([d3compl, d4compl, d5compl]),
-              "title").to_excel("out/transition_dwise.xlsx")
+export_with_stackedbars(
+    pd.concat([d3compl, d4compl, d5compl]), "title", "transition_dwise")
 # endregion
 
+# print periodic table
 big_df = merge(paths + freeBases)
-plt.style.use(['science', 'nature', 'no-latex'])
 fig, ax = make_scatter_pie(big_df)
-plt.savefig("out/periodic.svg", dpi=1000)
-
-fig, ax = stackedbar(groupAnalysis(mainGroup, "Coord_No"), "Koordinationszahl")
-plt.savefig("out/maincoord.svg", dpi=2000)
-
-fig, ax = stackedbar(groupAnalysis(df, "Group"), "Gruppe", False, True)
-plt.savefig("out/group.svg", dpi=2000)
+save_plot("periodic_table_corroles")

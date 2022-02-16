@@ -11,7 +11,7 @@ from matplotlib.ticker import AutoMinorLocator
 def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_legend: bool = False, y_selector: list[str] = plot_selector) -> Tuple[Figure, Axes]:
     selector = y_selector[::-1]
     le_colors = colors_min[::-1] + colors_ext[::-1]
-    fig, ax = plt.subplots(1, figsize=(4, 3))
+    fig, ax = plt.subplots()
     width = .95
     df.plot.bar(y=selector, stacked=True, color=le_colors,
                 width=width, edgecolor="black", linewidth=.3, ax=ax, legend=print_legend)
@@ -20,7 +20,7 @@ def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_lege
         labels = [" ".join(i.split(" ")[:-1])
                   for i in selector]
         ax.legend(handles=handles[::-1], labels=labels[::-1],
-                  loc=2, prop={'size': 5}, labelspacing=0.1)
+                  loc=2, prop={'size': 8}, labelspacing=0.1)
 
     ax.set(xlim=(-0.5, len(df)-.5))
     ax.tick_params(direction="out", top=False, right=False)
@@ -34,7 +34,7 @@ def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_lege
     for idx, c in enumerate(ax.containers):
         if print_no and idx == len(ax.containers)-1:
             ax.bar_label(c, labels=[df["structures"].iloc[idv]
-                         for idv, v in enumerate(c)], label_type="edge", fontsize=5, fontstyle="italic")
+                         for idv, v in enumerate(c)], label_type="edge", fontsize=8, fontstyle="italic")
         labels = ["{:.0%}".format(df[selector[idx]+" %"].iloc[idv]) if v.get_height() > 0.03 *
                   max_doop else '' for idv, v in enumerate(c)]
         if not print_legend:
@@ -43,8 +43,8 @@ def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_lege
             for text, bar in zip(legend, c):
                 ax.text(bar.get_x() + bar.get_width() + offset * width, bar.get_height() + bar.get_y() + offset / 5,
                         text, color="white",
-                        ha='right', va='top', fontsize=5, weight="bold")
+                        ha='right', va='top', fontsize=7, weight="bold")
         ax.bar_label(c, labels=labels, label_type='center',
-                     color="white", fontsize=5, fontweight="bold")
+                     color="white", fontsize=7, fontweight="bold")
     plt.xticks(rotation=0)
     return fig, ax

@@ -58,3 +58,15 @@ def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", s
     res["structures"] = pd.Series(bins["structures"]).tolist()
     return res
 # endregion
+
+
+def CoordNo_Grouper(df: pd.DataFrame) -> pd.DataFrame:
+    pd.options.mode.chained_assignment = None
+    part01 = df.query("Coord_No < 7")
+    result01 = groupAnalysis(part01, "Coord_No")
+    part02 = df.query("Coord_No >= 7")
+    part02.groupby("Group")
+    part02["CoordNo"] = "sonstige"
+    result02 = groupAnalysis(part02, "CoordNo")
+    pd.options.mode.chained_assignment = "warn"
+    return pd.concat([result01, result02])

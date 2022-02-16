@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from util.element import df_periodic_table
 from util.analysis import groupAnalysis, perc_selector
+from util.plotting import cm_to_inch
 from util.settings import colors_min
 
 
@@ -24,7 +25,7 @@ def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax
 
 
 def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
-    fig, ax = plt.subplots(1, figsize=(8, 5))
+    fig, ax = plt.subplots(1, figsize=(cm_to_inch(16), cm_to_inch(8)))
     plt.box(False)
     ax.set(xlim=(0.25, 18.75), ylim=(9.75, .25))
     plt.xticks(range(1, 19))
@@ -64,5 +65,5 @@ def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
                 continue
             list.append(res[m].values[0])
         draw_pie(row["Group"], row["Period"], list,
-                 res["Doop (exp.)"]*550, colors_min, ax)
+                 res["Doop (exp.)"]*400, colors_min, ax)
     return fig, ax
