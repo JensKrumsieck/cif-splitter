@@ -62,7 +62,7 @@ export_with_stackedbar_doop(
     transitionAndLn, [.2, .4, .6, 1, 1000], "metals_transition_doop")
 # transition doopwiede
 export_with_stackedbar_doop(
-    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "metals_transition_doop_wieder")
+    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "metals_transition_doop_wider")
 # transition by substituents
 export_with_stackedbars(transitionAndLn, "No_Subs",
                         "metals_transition_substituents", True, True)
