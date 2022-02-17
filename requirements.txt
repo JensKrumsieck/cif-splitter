@@ -4,3 +4,4 @@ matplotlib
 numpy
 autopep8
 SciencePlots
+openpyxl
