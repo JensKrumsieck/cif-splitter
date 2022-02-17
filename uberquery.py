@@ -186,7 +186,7 @@ export_with_stackedbar_doop(
     big_df, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "all_doop")
 
 # free base and metals group
-export_with_stackedbars(big_df, "Group", "all_overview")
+export_with_stackedbars(big_df, "Group", "all_overview", True, True)
 
 # free base and metals subs
 export_with_stackedbars(big_df, "No_Subs", "all_substituents", True, True)
