@@ -13,6 +13,11 @@ def merge(paths) -> pd.DataFrame:
     for mode in modes:
         df[mode + " comp %"] = df[mode + " comp"] / sum
 
+    sum_min = df["dom"].abs() + df["sad"].abs() + df["ruf"].abs() + \
+        df["wav x"].abs() + df["wav y"].abs() + df["pro"].abs()
+    for mode in modes:
+        df[mode + " %"] = df[mode].abs()/sum_min
+
     sum_ext = df["dom 1"].abs() + df["dom 2"].abs() + \
         df["sad 1"].abs() + df["sad 2"].abs() + \
         df["ruf 1"].abs() + df["ruf 2"].abs() + \

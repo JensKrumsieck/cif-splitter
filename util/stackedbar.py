@@ -5,7 +5,7 @@ from matplotlib.container import Container
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import pandas as pd
-from util.analysis import plot_selector
+from util.analysis import plot_selector, perc_ext_rev, perc_min
 from util.settings import colors_ext, colors_min, doop_axis_label
 from matplotlib.ticker import AutoMinorLocator
 
@@ -48,7 +48,10 @@ def __print_labels(idx: int, ax: Axes, df: pd.DataFrame, max_y: float, selector:
 
 def __print_modes(idx: int, ax: Axes, df: pd.DataFrame, max_y: float, width: float, selector: str, c: Container):
     offset = -.02
-    legend = [" ".join(selector[idx].split(" ")[:-1]) if v.get_height() > 0.03 *
+    mode = " ".join(selector[idx].split(" ")[:-1])
+    if len(selector) > 6 or "comp" not in selector[3]:
+        mode = selector[idx]
+    legend = [mode if v.get_height() > 0.03 *
               max_y and idv == len(c)-1 else '' for idv, v in enumerate(c)]
     for text, bar in zip(legend, c):
         ax.text(bar.get_x() + bar.get_width() + offset * width, bar.get_height() + bar.get_y() + offset / 5,
@@ -56,8 +59,13 @@ def __print_modes(idx: int, ax: Axes, df: pd.DataFrame, max_y: float, width: flo
                 ha='right', va='top', fontsize=8, weight="bold")
 
 
-def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector) -> Tuple[Figure, Axes]:
+def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector, start = 0) -> Tuple[Figure, Axes]:
+    if len(y_selector) > 8:
+        y_selector = perc_ext_rev
+    elif "comp" not in y_selector[3]:
+        y_selector = perc_min
     fig, ax, selector, le_colors = __prepare_plot(y_selector)
+
     ranges = ranges[:-1]
     width = __prepare_width(ranges)
     sel = [c for c in selector if "Doop" not in c]
@@ -72,7 +80,7 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
     plt.xticks(x_pos, x_pos)
     ax.set_xlabel(doop_axis_label)
     ax.set(ylim=(0, 1))
-    ax.set(xlim=(0, ranges[-1]))
+    ax.set(xlim=(start, ranges[-1]))
     ax.yaxis.set_major_formatter(
         matplotlib.ticker.StrMethodFormatter('{x:.0%}'))
     ax.set_title("$\it{Anzahl}$ $\it{Strukturen}$", pad=12)

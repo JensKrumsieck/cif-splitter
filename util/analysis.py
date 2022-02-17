@@ -4,6 +4,13 @@ import pandas as pd
 modes = ["dom", "sad", "ruf", "wav x", "wav y", "pro"]
 ext_modes = ["dom 1", "sad 1", "ruf 1", "wav x 1", "wav y 1", "pro 1",
              "dom 2", "sad 2", "ruf 2", "wav x 2", "wav y 2", "pro 2"]
+ext_modes_rev = ["dom 2", "sad 2", "ruf 2", "wav x 2", "wav y 2", "pro 2",
+                 "dom 1", "sad 1", "ruf 1", "wav x 1", "wav y 1", "pro 1"]
+perc_min = []
+for mode in modes:
+    perc_min.append(mode + " %")
+perc_min_selector = perc_min + list(["Doop (exp.)"])
+
 perc_comp = []
 for mode in modes:
     perc_comp.append(mode + " comp %")
@@ -14,6 +21,10 @@ perc_ext = []
 for mode in ext_modes:
     perc_ext.append(mode + " %")
 perc_ext_selector = perc_ext + list(["Doop (exp.)"])
+
+perc_ext_rev = []
+for mode in ext_modes_rev:
+    perc_ext_rev.append(mode + " %")
 
 plot_selector = []
 for mode in modes:

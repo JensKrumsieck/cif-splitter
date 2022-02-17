@@ -25,9 +25,9 @@ def cm_to_inch(value):
     return value/2.54
 
 
-def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector):
+def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector, start=0):
     current = doopAnalysis(df, ranges, "range", selector)
-    stackedbar_doop(current, ranges, selector)
+    stackedbar_doop(current, ranges, selector, start)
     export(current, filenameWithoutExtension)
 
 
