@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 
-from util.analysis import CoordNo_Grouper, groupAnalysis
-from util.stackedbar import stackedbar
+from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis
+from util.stackedbar import stackedbar, stackedbar_doop
 from util.analysis import perc_selector
 
 x_axis_labels = {
@@ -25,9 +25,15 @@ def cm_to_inch(value):
     return value/2.54
 
 
+def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector):
+    current = doopAnalysis(df, ranges, "range", selector)
+    stackedbar_doop(current, ranges, selector)
+    export(current, filenameWithoutExtension)
+
+
 def export_with_stackedbars(df: pd.DataFrame, by: str, filenameWithoutExtension: str, print_no: bool = True, print_legend: bool = False):
     current = groupAnalysis(df, by)
-    
+
     if by == "Coord_No":
         stackedbar(CoordNo_Grouper(df),
                    x_axis_labels[by], print_no, print_legend)

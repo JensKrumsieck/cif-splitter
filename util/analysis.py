@@ -53,6 +53,7 @@ def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_select
 
 
 def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
+    dataFrame = dataFrame.query("`Doop (exp.)` > 0.0001")
     bins = doopRanger(dataFrame, doopRanges, selector)
     res = groupAnalysis(bins, by, selector, False)
     res["structures"] = pd.Series(bins["structures"]).tolist()

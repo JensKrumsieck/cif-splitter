@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import pandas as pd
 from util.analysis import doopAnalysis, groupAnalysis, perc_selector, perc_ext_selector
 from util.merge import merge
-from util.plotting import cm_to_inch,  export_with_stackedbars, save_plot
+from util.plotting import cm_to_inch, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
@@ -29,10 +29,11 @@ assert len(transition) + len(mainGroup) + \
 plt.style.use(['science', 'nature', 'no-latex'])
 plt.rcParams["figure.figsize"] = (cm_to_inch(16), cm_to_inch(13))
 plt.rcParams["figure.dpi"] = 1200
-plt.rcParams["axes.labelsize"] = 10
-plt.rcParams["axes.titlesize"] = 8
-plt.rcParams["xtick.labelsize"] = 8
-plt.rcParams["ytick.labelsize"] = 8
+plt.rcParams["axes.labelsize"] = 11
+plt.rcParams["axes.titlesize"] = 9
+plt.rcParams["xtick.labelsize"] = 9
+plt.rcParams["ytick.labelsize"] = 9
+plt.rcParams["font.family"] = "Arial"
 
 # groupwise all
 export_with_stackedbars(df, "Group", "all_overview", False, True)
@@ -46,15 +47,15 @@ export_with_stackedbars(df, "Coord_No", "all_coordNo")
 # maingroup by CN
 export_with_stackedbars(mainGroup, "Coord_No", "maingroup_coordNo")
 # maingroup doop
-doopAnalysis(mainGroup, [.2, .4, .6, 1, 1000]
-             ).to_excel("out/maingroup_doop.xlsx")
+export_with_stackedbar_doop(mainGroup, [.2, .4, .6, 1, 1000], "maingroup_doop")
+
 # groupwise transition
 export_with_stackedbars(transitionAndLn, "Group",
                         "transition_overview", True, True)
 
 # transition doop
-doopAnalysis(transitionAndLn,
-             [.2, .4, .6, 1, 1000]).to_excel("out/transition_doop.xlsx")
+export_with_stackedbar_doop(
+    transitionAndLn, [.2, .4, .6, 1, 1000], "transition_doop")
 # transition by substituents
 export_with_stackedbars(transitionAndLn, "No_Subs",
                         "transition_substituents", True, True)
@@ -74,8 +75,8 @@ for group in groups:
     export_with_stackedbars(group_dataset, "M", f"transition_g{group}_metals")
 
     # group by doop
-    doopAnalysis(group_dataset, [.2, .4, .6, 1, 10000]).to_excel(
-        f"out/transition_g{group}_doop.xlsx")
+    export_with_stackedbar_doop(
+        group_dataset, [.2, .4, .6, 1, 10000], f"transition_g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
                             f"transition_g{group}_coordNo")
@@ -104,9 +105,9 @@ export_with_stackedbars(IronCorroles, "Coord_No", "transition_iron_coordNo")
 
 # region copper corroles
 CopperCorroles = transition.query("M == 'Cu'")
-ranges = [.5, .7, 1, 1000]
-doopAnalysis(CopperCorroles, ranges, "range", perc_ext_selector).to_excel(
-    "out/transition_copper_doop.xlsx")
+export_with_stackedbar_doop(
+    CopperCorroles,  [.5, .7, 1, 1000], "transition_copper_doop", perc_ext_selector)
+
 # endregion
 
 # region cobalt corroles
@@ -133,7 +134,8 @@ Ligands["structures"] = [count_n, count_a]
 export_with_stackedbars(Ligands, "title", "transition_manganese_axial", False)
 
 MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
-export_with_stackedbars(MnpFTPC, "Axial", "transition_mnpftpc_axial", False, True)
+export_with_stackedbars(
+    MnpFTPC, "Axial", "transition_mnpftpc_axial", False, True)
 # endregion
 
 # region 3d/4d/5d
