@@ -20,5 +20,5 @@ def merge(paths) -> pd.DataFrame:
         df["wav y 1"].abs() + df["wav y 2"].abs() + \
         df["pro 1"].abs() + df["pro 2"].abs()
     for mode in ext_modes:
-        df[mode + " %"] = df[mode].abs()/sum
+        df[mode + " %"] = df[mode].abs()/sum_ext
     return df

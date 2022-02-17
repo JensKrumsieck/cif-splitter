@@ -4,7 +4,6 @@ from matplotlib.axes import Axes
 from matplotlib.container import Container
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-from numpy import append
 import pandas as pd
 from util.analysis import plot_selector
 from util.settings import colors_ext, colors_min, doop_axis_label
