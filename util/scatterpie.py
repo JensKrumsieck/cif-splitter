@@ -12,16 +12,21 @@ from util.settings import colors_min
 
 
 def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax):
-    cumsum = np.cumsum(ratios)
-    cumsum = cumsum / cumsum[-1]
-    pie = [0] + cumsum.tolist()
-    for r1, r2, color in zip(pie[:-1], pie[1:], colors):
-        angles = np.linspace(2 * np.pi * r1, 2 * np.pi * r2)
-        x = [0] + np.cos(angles).tolist()
-        y = [0] + np.sin(angles).tolist()
-        xy = np.column_stack([x, y])
+    markers = []
+    previous = 0
 
-        ax.scatter([pos_x], [pos_y], marker=xy, s=size, facecolor=color)
+    for color, ratio in zip(colors, ratios):
+        cur = 2*np.pi*ratio+previous
+        angles = np.linspace(previous, cur, 30)
+        x = [0] + np.cos(angles).tolist() + [0]
+        y = [0] + np.sin(angles).tolist() + [0]
+        xy = np.column_stack([x, y])
+        previous = cur
+        markers.append({'marker': xy, 's': np.abs(
+            xy).max()**2*size, 'facecolor': color})
+
+    for marker in markers:
+        ax.scatter(pos_x, pos_y, **marker)
 
 
 def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
