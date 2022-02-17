@@ -36,7 +36,7 @@ plt.rcParams["ytick.labelsize"] = 9
 plt.rcParams["font.family"] = "Arial"
 
 # groupwise all
-export_with_stackedbars(df, "Group", "metals_all_overview", False, True)
+export_with_stackedbars(df, "Group", "metals_all_overview", True, True)
 # substituents all
 export_with_stackedbars(df, "No_Subs", "metals_all_substituents", True, True)
 # ligands all, no plot
@@ -60,6 +60,9 @@ export_with_stackedbars(transitionAndLn, "Group",
 # transition doop
 export_with_stackedbar_doop(
     transitionAndLn, [.2, .4, .6, 1, 1000], "metals_transition_doop")
+# transition doopwiede
+export_with_stackedbar_doop(
+    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "metals_transition_doop_wieder")
 # transition by substituents
 export_with_stackedbars(transitionAndLn, "No_Subs",
                         "metals_transition_substituents", True, True)
@@ -186,4 +189,4 @@ export_with_stackedbar_doop(
 export_with_stackedbars(big_df, "Group", "all_overview")
 
 # free base and metals subs
-export_with_stackedbars(big_df, "No_Subs", "all_substituents")
+export_with_stackedbars(big_df, "No_Subs", "all_substituents", True, True)
