@@ -106,7 +106,7 @@ export_with_stackedbars(IronCorroles, "Coord_No", "transition_iron_coordNo")
 # region copper corroles
 CopperCorroles = transition.query("M == 'Cu'")
 export_with_stackedbar_doop(
-    CopperCorroles,  [.5, .7, 1, 1000], "transition_copper_doop", perc_ext_selector)
+    CopperCorroles,  [.5, .7, 1, 1.2, 1000], "transition_copper_doop", perc_ext_selector)
 
 # endregion
 
