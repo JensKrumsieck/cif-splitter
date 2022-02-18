@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 from util.analysis import groupAnalysis, perc_selector, perc_ext_selector, perc_min_selector
 from util.merge import merge
@@ -190,3 +191,18 @@ export_with_stackedbars(big_df, "Group", "all_overview", True, True)
 
 # free base and metals subs
 export_with_stackedbars(big_df, "No_Subs", "all_substituents", True, True)
+
+# SCATTERPLTS
+# TODO WAV: |wav x comp| vs |wav y comp|
+groups = ["No_Subs", "Group"]
+modes = ["dom", "sad", "ruf", "wav x", "wav y"]
+colors = {0: "#ffffff", 1: "#000000", 2: "#9D9D9D", 3: "#333333", 4: "#BE2633", 5: "#E06F8B", 6: "#493C2B",
+          7: "#A46422", 8: "#EB8931", 9: "#F7E26B", 10: "#2F484E", 11: "#44891A",
+          12: "#A3CE27", 13: "#1B2632", 14: "#005784", 15: "#31A2F2", "Ln": "#B2DCEF"}
+for analysis in groups:
+    for mode in modes:
+        fig, ax = plt.subplots()
+        ax.scatter(x=big_df[mode + " 1"].abs(), y=big_df[mode + " 2"] *
+                   np.sign(big_df[mode + " 1"]), c=big_df[analysis].map(colors))
+        ax.legend()
+        plt.savefig(f"out/all_scatter_{mode}_{analysis}.png")
