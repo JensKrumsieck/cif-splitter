@@ -116,6 +116,8 @@ for key in df_to_name:
     if key != "corroles_freebases":
         export_with_stackedbar_doop(
             df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
+        export_with_stackedbar_doop(
+            df_to_name[key], [.2, .4, .6, .8, 1, 1.5, 2, 1000], f"{key}_doop_wider")
     for analysis in analyses:
         export_with_stackedbars(
             df_to_name[key], analysis, f"{key}_{filenames[analysis]}", True, print_legend[analysis])
@@ -125,10 +127,6 @@ for key in df_to_name_2:
     export_with_stackedbars(df_to_name_2[key], "M", f"{key}_metals")
 
 # additional doop plots
-export_with_stackedbar_doop(
-    allcorroles, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "corroles_all_doop")
-export_with_stackedbar_doop(
-    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "corroles_metals_transition_doop_wider")
 export_with_stackedbar_doop(
     free_min_feasible, [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles_freebases_doop_min", perc_min_selector, .6)
 export_with_stackedbar_doop(
