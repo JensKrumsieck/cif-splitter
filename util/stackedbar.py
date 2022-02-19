@@ -59,7 +59,7 @@ def __print_modes(idx: int, ax: Axes, df: pd.DataFrame, max_y: float, width: flo
                 ha='right', va='top', fontsize=8, weight="bold")
 
 
-def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector, start = 0) -> Tuple[Figure, Axes]:
+def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector, start=0) -> Tuple[Figure, Axes]:
     if len(y_selector) > 8:
         y_selector = perc_ext_rev
     elif "comp" not in y_selector[3]:
@@ -93,7 +93,7 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
     return fig, ax
 
 
-def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_legend: bool = False, y_selector: list[str] = plot_selector) -> Tuple[Figure, Axes]:
+def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_legend: bool = False, y_selector: list[str] = plot_selector, tickRotation: int = 0) -> Tuple[Figure, Axes]:
     fig, ax, selector, le_colors = __prepare_plot(y_selector)
     width = __prepare_width()
     df.plot.bar(y=selector, stacked=True, color=le_colors,
@@ -119,5 +119,5 @@ def stackedbar(df: pd.DataFrame, x_label: str, print_no: bool = True, print_lege
         __print_labels(idx, ax, df, max_doop, selector[idx]+" %", c)
         if not print_legend:
             __print_modes(idx, ax, df, max_doop, width, selector, c)
-    plt.xticks(rotation=0)
+    plt.xticks(rotation=tickRotation)
     return fig, ax

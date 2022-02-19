@@ -1,3 +1,4 @@
+from unicodedata import category
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,18 +10,53 @@ from util.scatterpie import make_scatter_pie
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
 ### UBERMERGE.py RESULTS CAN BE USED, YOU NEED TO ENTER LIGAND,AXIAL,... INFO BY HAND! ###
-paths = [r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
-         r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
-         r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx"]
+paths = [r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
+         r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
+         r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx"]
 freeBases = [
-    r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\Corrole\FreeBases.xlsx"]
+    r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\FreeBases.xlsx"]
+
+nConfused = [
+    r"D:\Powerfolders\Forschung\PorphyStruct Results\NConfusedCorrole\NConfused.xlsx"]
+iso = [r"D:\Powerfolders\Forschung\PorphyStruct Results\Isocorrole\Isocorroles.xlsx"]
+hetero = [
+    r"D:\Powerfolders\Forschung\PorphyStruct Results\Heterocorrole\Heterocorroles.xlsx"]
+coreHetero = [
+    r"D:\Powerfolders\Forschung\PorphyStruct Results\CoreHeterocorrole\CoreHeterocorroles.xlsx"]
+corrolazines = [
+    r"D:\Powerfolders\Forschung\PorphyStruct Results\Corrolazine\Corrolazines.xlsx"]
+nSubst = [
+    r"D:\Powerfolders\Forschung\PorphyStruct Results\NRCorroles\NRCorroles.xlsx"]
 
 df = merge(paths)
 nonLa = df.query("Group != 'Ln'")
 mainGroup = nonLa.query("Group < 3 or Group > 12")
+mainGroup = mainGroup.assign(category="Hauptgruppen Corrole")
 lanthanoids = df.query("Group == 'Ln'")
 transition = nonLa.query("Group > 3 and Group < 13")
 transitionAndLn = pd.concat([transition, lanthanoids])
+transitionAndLn = transitionAndLn.assign(category="Übergangsmetall Corrole")
+allcorroles = merge(paths + freeBases)
+free = allcorroles.query("M == 'H'")
+free = free.assign(category="Freie Corrol Basen")
+free_min_feasible = free.query("`δoop (min) %` < .03")
+
+nConfusedDf = merge(nConfused)
+nConfusedDf = nConfusedDf.assign(category="N-Confused Corrole")
+isoDf = merge(iso)
+isoDf = isoDf.assign(category="Isocorrole")
+heteroDf = merge(hetero)
+heteroDf = heteroDf.assign(category="10-Heterocorrole")
+coreHeteroDf = merge(coreHetero)
+coreHeteroDf = coreHeteroDf.assign(category="N-Heterocorrole")
+corrolazinesDf = merge(corrolazines)
+corrolazinesDf = corrolazinesDf.assign(category="Corrolazine")
+nSubstDf = merge(nSubst)
+nSubstDf = nSubstDf.assign(category="N-Subst. Corrole")
+
+hugeDf = pd.concat([mainGroup, transitionAndLn, free, nConfusedDf,
+                   isoDf, heteroDf, coreHeteroDf, corrolazinesDf, nSubstDf])
+
 
 # sanity check
 assert len(transition) + len(mainGroup) + \
@@ -36,40 +72,67 @@ plt.rcParams["xtick.labelsize"] = 9
 plt.rcParams["ytick.labelsize"] = 9
 plt.rcParams["font.family"] = "Arial"
 
-# groupwise all
-export_with_stackedbars(df, "Group", "metals_all_overview", True, True)
-# substituents all
-export_with_stackedbars(df, "No_Subs", "metals_all_substituents", True, True)
-# ligands all, no plot
+analyses = ["Group", "No_Subs", "Coord_No"]
+filenames = {"Group": "overview",
+             "No_Subs": "substituents",
+             "Coord_No": "coordNo"}
+df_to_name_1 = {
+    "all": allcorroles,
+    "freebases": free,
+    "metals_all": df,
+    "metals_maingroup": mainGroup,
+    "metals_transition": transitionAndLn,
+    "anything": hugeDf
+}
+df_to_name_2 = {
+    "10-hetero": heteroDf,
+    "N-hetero": coreHeteroDf,
+    "confused": nConfusedDf,
+    "corrolazines": corrolazinesDf,
+    "N-Substituted": nSubstDf,
+    "isocorroles": isoDf,
+}
+df_to_name = df_to_name_1 | df_to_name_2
+
+print_legend = {
+    "Group": True,
+    "No_Subs": True,
+    "Coord_No": False
+}
+# ligand stats
 groupAnalysis(df, "Ligand").to_excel("out/metals_all_ligands.xlsx")
-# all doop
-export_with_stackedbar_doop(
-    df, [.2, .4, .6, .8, 1, 1.2, 1000], "metals_all_doop")
-# coord no all
-export_with_stackedbars(df, "Coord_No", "metals_all_coordNo")
 
-# maingroup by CN
-export_with_stackedbars(mainGroup, "Coord_No", "metals_maingroup_coordNo")
-# maingroup doop
-export_with_stackedbar_doop(
-    mainGroup, [.2, .4, .6, 1, 1000], "metals_maingroup_doop")
+# print periodic table
+fig, ax = make_scatter_pie(allcorroles)
+save_plot("periodic_table_corroles")
 
-# groupwise transition
-export_with_stackedbars(transitionAndLn, "Group",
-                        "metals_transition_overview", True, True)
+fig, ax = make_scatter_pie(hugeDf)
+save_plot("periodic_table_all")
 
-# transition doop
+export_with_stackedbars(hugeDf, "category", "anything_category", True, True)
+
+# loop analyses
+for key in df_to_name:
+    if key != "freebases":
+        export_with_stackedbar_doop(
+            df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
+    for analysis in analyses:
+        export_with_stackedbars(
+            df_to_name[key], analysis, f"{key}_{filenames[analysis]}", True, print_legend[analysis])
+
+# special corroloids
+for key in df_to_name_2:
+    export_with_stackedbars(df_to_name_2[key], "M", f"{key}_metals")
+
+# additional doop plots
 export_with_stackedbar_doop(
-    transitionAndLn, [.2, .4, .6, 1, 1000], "metals_transition_doop")
-# transition doopwiede
+    allcorroles, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "all_doop")
 export_with_stackedbar_doop(
     transitionAndLn, [.2, .4, .6, 1, 2, 1000], "metals_transition_doop_wider")
-# transition by substituents
-export_with_stackedbars(transitionAndLn, "No_Subs",
-                        "metals_transition_substituents", True, True)
-# transition by CN
-export_with_stackedbars(transitionAndLn, "Coord_No",
-                        "metals_transition_coordNo")
+export_with_stackedbar_doop(
+    free_min_feasible, [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_min", perc_min_selector, .6)
+export_with_stackedbar_doop(
+    free,  [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_ext")
 
 # group 4-5 by Metal
 export_with_stackedbars(transition.query(
@@ -168,30 +231,6 @@ export_with_stackedbars(
     pd.concat([d3compl, d4compl, d5compl]), "title", "metals_transition_dwise")
 # endregion
 
-# print periodic table
-big_df = merge(paths + freeBases)
-fig, ax = make_scatter_pie(big_df)
-save_plot("periodic_table_corroles")
-
-# FREEBASE
-free = big_df.query("M == 'H'")
-free_min_feasible = free.query("`δoop (min) %` < .03")
-export_with_stackedbar_doop(
-    free_min_feasible, [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_min", perc_min_selector, .6)
-
-export_with_stackedbar_doop(
-    free,  [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_ext")
-
-# free base and metals doop
-export_with_stackedbar_doop(
-    big_df, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "all_doop")
-
-# free base and metals group
-export_with_stackedbars(big_df, "Group", "all_overview", True, True)
-
-# free base and metals subs
-export_with_stackedbars(big_df, "No_Subs", "all_substituents", True, True)
-
 # SCATTERPLTS
 # TODO WAV: |wav x comp| vs |wav y comp|
 groups = ["No_Subs", "Group"]
@@ -202,7 +241,7 @@ colors = {0: "#ffffff", 1: "#000000", 2: "#9D9D9D", 3: "#333333", 4: "#BE2633", 
 for analysis in groups:
     for mode in modes:
         fig, ax = plt.subplots()
-        ax.scatter(x=big_df[mode + " 1"].abs(), y=big_df[mode + " 2"] *
-                   np.sign(big_df[mode + " 1"]), c=big_df[analysis].map(colors))
+        ax.scatter(x=allcorroles[mode + " 1"].abs(), y=allcorroles[mode + " 2"] *
+                   np.sign(allcorroles[mode + " 1"]), c=allcorroles[analysis].map(colors))
         ax.legend()
         plt.savefig(f"out/all_scatter_{mode}_{analysis}.png")

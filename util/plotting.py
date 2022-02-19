@@ -1,9 +1,8 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 
-from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis
+from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis, plot_selector, perc_selector
 from util.stackedbar import stackedbar, stackedbar_doop
-from util.analysis import perc_selector
 
 x_axis_labels = {
     "Coord_No": "Koordinationszahl",
@@ -12,12 +11,13 @@ x_axis_labels = {
     "Ligand": "Ligand",
     "No_Subs": "Anzahl Substituenten",
     "title": "",
-    "Axial": ""
+    "Axial": "",
+    "category": ""
 }
 
 
 def save_plot(filenameWithoutExtension: str):
-    plt.savefig(f"out/{filenameWithoutExtension}.svg")
+    # plt.savefig(f"out/{filenameWithoutExtension}.svg")
     plt.savefig(f"out/{filenameWithoutExtension}.png")
 
 
@@ -38,12 +38,17 @@ def export_with_stackedbars(df: pd.DataFrame, by: str, filenameWithoutExtension:
         stackedbar(CoordNo_Grouper(df),
                    x_axis_labels[by], print_no, print_legend)
     else:
-        stackedbar(current, x_axis_labels[by],  print_no, print_legend)
+        rot = 0
+        if by == "category":
+            current = current.sort_values(by="structures", ascending=True)
+            rot = 90
+        stackedbar(current, x_axis_labels[by],
+                   print_no, print_legend, plot_selector, rot)
     export(current, filenameWithoutExtension)
 
 
 def export(df: pd.DataFrame, filenameWithoutExtension: str):
     save_plot(filenameWithoutExtension)
-    df.to_excel(f"out/{filenameWithoutExtension}.xlsx")
+    # df.to_excel(f"out/{filenameWithoutExtension}.xlsx")
     print(f"exported {filenameWithoutExtension}")
     plt.close()
