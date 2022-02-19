@@ -77,11 +77,11 @@ filenames = {"Group": "overview",
              "No_Subs": "substituents",
              "Coord_No": "coordNo"}
 df_to_name_1 = {
-    "all": allcorroles,
-    "freebases": free,
-    "metals_all": df,
-    "metals_maingroup": mainGroup,
-    "metals_transition": transitionAndLn,
+    "corroles_all": allcorroles,
+    "corroles_freebases": free,
+    "corroles_metals_all": df,
+    "corroles_metals_maingroup": mainGroup,
+    "corroles_metals_transition": transitionAndLn,
     "anything": hugeDf
 }
 df_to_name_2 = {
@@ -100,20 +100,20 @@ print_legend = {
     "Coord_No": False
 }
 # ligand stats
-groupAnalysis(df, "Ligand").to_excel("out/metals_all_ligands.xlsx")
+groupAnalysis(df, "Ligand").to_excel("out/corroles_metals_all_ligands.xlsx")
 
 # print periodic table
 fig, ax = make_scatter_pie(allcorroles)
 save_plot("periodic_table_corroles")
 
 fig, ax = make_scatter_pie(hugeDf)
-save_plot("periodic_table_all")
+save_plot("periodic_table_anything")
 
 export_with_stackedbars(hugeDf, "category", "anything_category", True, True)
 
 # loop analyses
 for key in df_to_name:
-    if key != "freebases":
+    if key != "corroles_freebases":
         export_with_stackedbar_doop(
             df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
     for analysis in analyses:
@@ -126,17 +126,17 @@ for key in df_to_name_2:
 
 # additional doop plots
 export_with_stackedbar_doop(
-    allcorroles, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "all_doop")
+    allcorroles, [.2, .4, .6, .8, 1, 1.5, 2, 1000], "corroles_all_doop")
 export_with_stackedbar_doop(
-    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "metals_transition_doop_wider")
+    transitionAndLn, [.2, .4, .6, 1, 2, 1000], "corroles_metals_transition_doop_wider")
 export_with_stackedbar_doop(
-    free_min_feasible, [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_min", perc_min_selector, .6)
+    free_min_feasible, [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles_freebases_doop_min", perc_min_selector, .6)
 export_with_stackedbar_doop(
-    free,  [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "freebases_doop_ext")
+    free,  [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles_freebases_doop_ext")
 
 # group 4-5 by Metal
 export_with_stackedbars(transition.query(
-    "Group == 4 or Group == 5"), "M", "metals_transition_g4g5_metals")
+    "Group == 4 or Group == 5"), "M", "corroles_metals_transition_g4g5_metals")
 
 # loop other groups
 groups = [6, 7, 8, 9, 10, 11, 12]
@@ -145,14 +145,14 @@ for group in groups:
     group_dataset = transition.query(f"Group == {group}")
 
     export_with_stackedbars(
-        group_dataset, "M", f"metals_transition_g{group}_metals")
+        group_dataset, "M", f"corroles_metals_transition_g{group}_metals")
 
     # group by doop
     export_with_stackedbar_doop(
-        group_dataset, [.2, .4, .6, 1, 10000], f"metals_transition_g{group}_doop")
+        group_dataset, [.2, .4, .6, 1, 10000], f"corroles_metals_transition_g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
-                            f"metals_transition_g{group}_coordNo")
+                            f"corroles_metals_transition_g{group}_coordNo")
 
 # region SELECTED MAINGROUP COMPLEXES
 mgcn4 = mainGroup.query("Coord_No == 4")
@@ -168,30 +168,30 @@ tin_5c = mgcn5.query("M == 'Sn'")[perc_selector].mean()
 tin_5c["M"] = "Sn"
 sel_comp = pd.DataFrame([phos_6c, gall_6c, germ_5c, tin_5c])
 export_with_stackedbars(
-    sel_comp, "M", "metals_maingroup_selectedMetals", False)
+    sel_comp, "M", "corroles_metals_maingroup_selectedMetals", False)
 # endregion
 
 # region Iron Corroles
 IronCorroles = transition.query("M == 'Fe'")
 export_with_stackedbars(IronCorroles, "Ligand",
-                        "metals_transition_iron_ligands")
+                        "corroles_metals_transition_iron_ligands")
 export_with_stackedbars(IronCorroles, "Coord_No",
-                        "metals_transition_iron_coordNo")
+                        "corroles_metals_transition_iron_coordNo")
 # endregion
 
 # region copper corroles
 CopperCorroles = transition.query("M == 'Cu'")
 export_with_stackedbar_doop(
-    CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "metals_transition_copper_doop", perc_ext_selector)
+    CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "corroles_metals_transition_copper_doop", perc_ext_selector)
 
 export_with_stackedbar_doop(
-    CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "metals_transition_copper_doop_wider", perc_ext_selector)
+    CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "corroles_metals_transition_copper_doop_wider", perc_ext_selector)
 # # endregion
 
 # region cobalt corroles
 CobaltCorroles = transition.query("M == 'Co'")
 export_with_stackedbars(CobaltCorroles, "Coord_No",
-                        "metals_transition_cobalt_coordNo")
+                        "corroles_metals_transition_cobalt_coordNo")
 # endregion
 
 # region manganese corroles
@@ -210,11 +210,11 @@ count_a = AnionicMnCors.shape[0]
 Ligands = pd.concat([NeutralAnalysis, AnionicAnalysis])
 Ligands["structures"] = [count_n, count_a]
 export_with_stackedbars(
-    Ligands, "title", "metals_transition_manganese_axial", False)
+    Ligands, "title", "corroles_metals_transition_manganese_axial", False)
 
 MnpFTPC = transition.query("M == 'Mn' and Ligand == 'pFTPC'")
 export_with_stackedbars(
-    MnpFTPC, "Axial", "metals_transition_mnpftpc_axial", False, True)
+    MnpFTPC, "Axial", "corroles_metals_transition_mnpftpc_axial", False, True)
 # endregion
 
 # region 3d/4d/5d
@@ -224,11 +224,11 @@ m5d = ["La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]
 d3compl = transition.query("M.isin(@m3d)")
 d4compl = transition.query("M.isin(@m4d)")
 d5compl = transition.query("M.isin(@m5d)")
-d3compl["title"] = "3D"
-d4compl["title"] = "4D"
-d5compl["title"] = "5D"
+d3compl.assign(title="3D")
+d4compl.assign(title="4D")
+d5compl.assign(title="5D")
 export_with_stackedbars(
-    pd.concat([d3compl, d4compl, d5compl]), "title", "metals_transition_dwise")
+    pd.concat([d3compl, d4compl, d5compl]), "title", "corroles_metals_transition_dwise")
 # endregion
 
 # SCATTERPLTS
@@ -244,4 +244,4 @@ for analysis in groups:
         ax.scatter(x=allcorroles[mode + " 1"].abs(), y=allcorroles[mode + " 2"] *
                    np.sign(allcorroles[mode + " 1"]), c=allcorroles[analysis].map(colors))
         ax.legend()
-        plt.savefig(f"out/all_scatter_{mode}_{analysis}.png")
+        plt.savefig(f"out/corroles_all_scatter_{mode}_{analysis}.png")
