@@ -218,9 +218,9 @@ export_with_stackedbars(
     pd.concat([d3compl, d4compl, d5compl]), "title", "corroles/metals_transition_dwise")
 # endregion
 
-#region 10hetero n
-export_with_stackedbars(heterocorroles, "10_Pos", "10-hetero/all_heteroatom")
-#endregion
+# region 10hetero n
+export_with_stackedbars(heterocorroles, "10_Pos", "10-hetero/all_heteroatom", True, True)
+# endregion
 
 # one could improve colors later....
 scatter_colors = ["#222222", "#F3C300", "#875691", "#F38500", "#A1CBF1",
