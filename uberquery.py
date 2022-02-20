@@ -211,9 +211,9 @@ m5d = ["La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]
 d3compl = corroles_transition.query("M.isin(@m3d)")
 d4compl = corroles_transition.query("M.isin(@m4d)")
 d5compl = corroles_transition.query("M.isin(@m5d)")
-d3compl = d3compl.assign(title="3D")
-d4compl = d4compl.assign(title="4D")
-d5compl = d5compl.assign(title="5D")
+d3compl = d3compl.assign(title="3d")
+d4compl = d4compl.assign(title="4d")
+d5compl = d5compl.assign(title="5d")
 export_with_stackedbars(
     pd.concat([d3compl, d4compl, d5compl]), "title", "corroles/metals_transition_dwise")
 # endregion
