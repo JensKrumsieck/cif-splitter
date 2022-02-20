@@ -17,8 +17,10 @@ x_axis_labels = {
 
 
 def save_plot(filenameWithoutExtension: str):
-    plt.savefig(f"out/{filenameWithoutExtension}.svg")
+    # plt.savefig(f"out/{filenameWithoutExtension}.svg")
     plt.savefig(f"out/{filenameWithoutExtension}.png")
+    plt.close()
+    print(f"exported {filenameWithoutExtension}")
 
 
 def cm_to_inch(value):
@@ -49,6 +51,4 @@ def export_with_stackedbars(df: pd.DataFrame, by: str, filenameWithoutExtension:
 
 def export(df: pd.DataFrame, filenameWithoutExtension: str):
     save_plot(filenameWithoutExtension)
-    df.to_excel(f"out/{filenameWithoutExtension}.xlsx")
-    print(f"exported {filenameWithoutExtension}")
-    plt.close()
+    # df.to_excel(f"out/{filenameWithoutExtension}.xlsx")

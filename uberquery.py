@@ -1,3 +1,4 @@
+import os
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -6,6 +7,7 @@ from util.merge import merge
 from util.plotting import cm_to_inch, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 from util.settings import colors_min, colors_ext
+from util.scatter import scatter, signed_mode
 
 # plot styles
 plt.style.use(['science', 'nature', 'no-latex'])
@@ -17,6 +19,12 @@ plt.rcParams["xtick.labelsize"] = 9
 plt.rcParams["ytick.labelsize"] = 9
 plt.rcParams["font.family"] = "Arial"
 
+# create paths:
+if not os.path.exists("out"):
+    os.mkdir("out")
+for folder in ["corroles", "10-hetero", "N-hetero", "confused", "corrolazines", "N-Substituted", "isocorroles"]:
+    if not os.path.exists(f"out/{folder}"):
+        os.mkdir(f"out/{folder}")
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
@@ -57,19 +65,19 @@ filenames = {"Group": "overview",
              "Coord_No": "coordNo"}
 
 filenames_corroles = {
-    "corroles_all": corroles_all,
-    "corroles_freebases": corroles_freeBase,
-    "corroles_metals_all": corroles_metals,
-    "corroles_metals_maingroup": corroles_maingroup,
-    "corroles_metals_transition": corroles_dfBlock
+    "corroles/all": corroles_all,
+    "corroles/freebases": corroles_freeBase,
+    "corroles/metals_all": corroles_metals,
+    "corroles/metals_maingroup": corroles_maingroup,
+    "corroles/metals_transition": corroles_dfBlock
 }
 filenames_special = {
-    "10-hetero": heterocorroles,
-    "N-hetero": nHeterocorroles,
-    "confused": nConfusedCorroles,
-    "corrolazines": corrolazines,
-    "N-Substituted": nSubstCorroles,
-    "isocorroles": isocorroles,
+    "10-hetero/all": heterocorroles,
+    "N-hetero/all": nHeterocorroles,
+    "confused/all": nConfusedCorroles,
+    "corrolazines/all": corrolazines,
+    "N-Substituted/all": nSubstCorroles,
+    "isocorroles/all": isocorroles,
 }
 df_to_name = filenames_corroles | filenames_special | {"anything": allData}
 
@@ -80,11 +88,11 @@ print_legend = {
 }
 # ligand stats
 groupAnalysis(corroles_all, "Ligand").to_excel(
-    "out/corroles_all_ligands.xlsx")
+    "out/corroles/all_ligands.xlsx")
 
 # print periodic table
 fig, ax = make_scatter_pie(corroles_all)
-save_plot("periodic_table_corroles")
+save_plot("corroles/periodic_table")
 
 fig, ax = make_scatter_pie(allData)
 save_plot("periodic_table_anything")
@@ -94,7 +102,7 @@ export_with_stackedbars(allData, "category", "anything_category", True, True)
 
 # loop analyses
 for key in df_to_name:
-    if key != "corroles_freebases":
+    if key != "corroles/freebases":
         export_with_stackedbar_doop(
             df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
         export_with_stackedbar_doop(
@@ -109,13 +117,13 @@ for key in filenames_special:
 
 # additional doop plots
 export_with_stackedbar_doop(corroles_freeBase.query("`δoop (min) %` < .03"),
-                            [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles_freebases_doop_min", perc_min_selector, .6)
+                            [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles/freebases_doop_min", perc_min_selector, .6)
 export_with_stackedbar_doop(corroles_freeBase,
-                            [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles_freebases_doop_ext")
+                            [.6, .7, .8, .9, 1, 1.2, 1.8, 1000], "corroles/freebases_doop_ext")
 
 # group 4-5 by Metal
 export_with_stackedbars(corroles_transition.query(
-    "Group == 4 or Group == 5"), "M", "corroles_metals_transition_g4g5_metals")
+    "Group == 4 or Group == 5"), "M", "corroles/metals_transition_g4g5_metals")
 
 # loop other groups
 groups = [6, 7, 8, 9, 10, 11, 12]
@@ -124,14 +132,14 @@ for group in groups:
     group_dataset = corroles_transition.query(f"Group == {group}")
 
     export_with_stackedbars(
-        group_dataset, "M", f"corroles_metals_transition_g{group}_metals")
+        group_dataset, "M", f"corroles/metals_transition_g{group}_metals")
 
     # group by doop
     export_with_stackedbar_doop(
-        group_dataset, [.2, .4, .6, 1, 10000], f"corroles_metals_transition_g{group}_doop")
+        group_dataset, [.2, .4, .6, 1, 10000], f"corroles/metals_transition_g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
-                            f"corroles_metals_transition_g{group}_coordNo")
+                            f"corroles/metals_transition_g{group}_coordNo")
 
 # region SELECTED MAINGROUP COMPLEXES
 mgcn4 = corroles_maingroup.query("Coord_No == 4")
@@ -147,30 +155,30 @@ tin_5c = mgcn5.query("M == 'Sn'")[perc_selector].mean()
 tin_5c["M"] = "Sn"
 sel_comp = pd.DataFrame([phos_6c, gall_6c, germ_5c, tin_5c])
 export_with_stackedbars(
-    sel_comp, "M", "corroles_metals_maingroup_selectedMetals", False)
+    sel_comp, "M", "corroles/metals_maingroup_selectedMetals", False)
 # endregion
 
 # region Iron Corroles
 IronCorroles = corroles_transition.query("M == 'Fe'")
 export_with_stackedbars(IronCorroles, "Ligand",
-                        "corroles_metals_transition_iron_ligands")
+                        "corroles/metals_transition_iron_ligands")
 export_with_stackedbars(IronCorroles, "Coord_No",
-                        "corroles_metals_transition_iron_coordNo")
+                        "corroles/metals_transition_iron_coordNo")
 # endregion
 
 # region copper corroles
 CopperCorroles = corroles_transition.query("M == 'Cu'")
 export_with_stackedbar_doop(
-    CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "corroles_metals_transition_copper_doop", perc_ext_selector)
+    CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "corroles/metals_transition_copper_doop", perc_ext_selector)
 
 export_with_stackedbar_doop(
-    CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "corroles_metals_transition_copper_doop_wider", perc_ext_selector)
+    CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "corroles/metals_transition_copper_doop_wider", perc_ext_selector)
 # # endregion
 
 # region cobalt corroles
 CobaltCorroles = corroles_transition.query("M == 'Co'")
 export_with_stackedbars(CobaltCorroles, "Coord_No",
-                        "corroles_metals_transition_cobalt_coordNo")
+                        "corroles/metals_transition_cobalt_coordNo")
 # endregion
 
 # region manganese corroles
@@ -189,11 +197,11 @@ count_a = AnionicMnCors.shape[0]
 Ligands = pd.concat([NeutralAnalysis, AnionicAnalysis])
 Ligands["structures"] = [count_n, count_a]
 export_with_stackedbars(
-    Ligands, "title", "corroles_metals_transition_manganese_axial", False)
+    Ligands, "title", "corroles/metals_transition_manganese_axial", False)
 
 MnpFTPC = corroles_transition.query("M == 'Mn' and Ligand == 'pFTPC'")
 export_with_stackedbars(
-    MnpFTPC, "Axial", "corroles_metals_transition_mnpftpc_axial", False, True)
+    MnpFTPC, "Axial", "corroles/metals_transition_mnpftpc_axial", False, True)
 # endregion
 
 # region 3d/4d/5d
@@ -207,49 +215,60 @@ d3compl = d3compl.assign(title="3D")
 d4compl = d4compl.assign(title="4D")
 d5compl = d5compl.assign(title="5D")
 export_with_stackedbars(
-    pd.concat([d3compl, d4compl, d5compl]), "title", "corroles_metals_transition_dwise")
+    pd.concat([d3compl, d4compl, d5compl]), "title", "corroles/metals_transition_dwise")
 # endregion
 
-# SCATTERPLTS
-# TODO WAV: |wav x comp| vs |wav y comp|
+# one could improve colors later....
+scatter_colors = ["#222222", "#F3C300", "#875691", "#F38500", "#A1CBF1",
+                  "#BF0032", "#008855", "#0067A6", "#C3B381", "#818180",
+                  "#E58FAB", "#892C16", "#F99378", "#F1A300", "#604E97",
+                  "#DDD300", "#2A3C26"]
+
 groups = ["No_Subs", "Group"]
 modes = ["dom", "sad", "ruf", "wav x", "wav y"]
-colors = {0: "#ffffff", 1: "#000000", 2: "#9D9D9D", 3: "#333333", 4: "#BE2633", 5: "#E06F8B", 6: "#493C2B",
-          7: "#A46422", 8: "#EB8931", 9: "#F7E26B", 10: "#2F484E", 11: "#44891A",
-          12: "#A3CE27", 13: "#1B2632", 14: "#005784", 15: "#31A2F2", "Ln": "#B2DCEF"}
-cols = colors_min + colors_ext
+colors = {0: scatter_colors[0], 1: scatter_colors[1], 2: scatter_colors[2], 3: scatter_colors[3], 4: scatter_colors[4], 5: scatter_colors[5],
+          6: scatter_colors[6], 7: scatter_colors[7], 8: scatter_colors[8], 9: scatter_colors[9], 10: scatter_colors[10], 11: scatter_colors[11],
+          12: scatter_colors[12],  13: scatter_colors[13], 14: scatter_colors[14], 15: scatter_colors[15], "Ln": scatter_colors[16]}
 categories = {
-    "Hauptgruppen Corrole": cols[0],
-    "Übergangsmetall Corrole": cols[1],
-    "Freie Corrol Basen": cols[2],
-    "N-Confused Corrole": cols[3],
-    "Isocorrole": cols[4],
-    "10-Heterocorrole": cols[5],
-    "N-Heterocorrole": cols[6],
-    "Corrolazine": cols[7],
-    "N-Subst. Corrole": cols[8],
+    "Hauptgruppen Corrole": scatter_colors[0],
+    "Übergangsmetall Corrole": scatter_colors[1],
+    "Freie Corrol Basen": scatter_colors[2],
+    "N-Confused Corrole": scatter_colors[3],
+    "Isocorrole": scatter_colors[4],
+    "10-Heterocorrole": scatter_colors[5],
+    "N-Heterocorrole": scatter_colors[6],
+    "Corrolazine": scatter_colors[7],
+    "N-Subst. Corrole": scatter_colors[8],
 }
 
 for analysis in groups:
     for mode in modes:
-        fig, ax = plt.subplots()
-        for c in colors:
-            data = corroles_all.query("{0} == @c".format(analysis))
-            if data.shape[0] > 0:
-                ax.scatter(x=data[mode + " 1"].abs(), y=data[mode + " 2"] *
-                           np.sign(data[mode + " 1"]), c=colors[c], label=c)
-        ax.legend()
-        ax.set_xlabel(f"|{mode} 1| /Å")
-        ax.set_ylabel(f"{mode} 2 x sign({mode} 1) /Å")
-        plt.savefig(f"out/corroles_all_scatter_{mode}_{analysis}.png")
-
+        scatter(corroles_all, colors, analysis,
+                lambda x: x[mode + " 1"].abs(), f"|{mode} 1| /Å",
+                lambda y: signed_mode(y, mode), f"{mode} 2 x sign({mode} 1) /Å",
+                f"corroles/all_scatter_{mode}_{analysis}")
+    scatter(corroles_all, colors, analysis,
+            lambda x: x["wav x comp"], "wav x /Å",
+            lambda y: y["wav y comp"], "wav y /Å",
+            f"corroles/all_scatter_wavxy_{analysis}")
 for mode in modes:
-    fig, ax = plt.subplots()
-    for c in categories:
-        data = allData.query("category == @c")
-        ax.scatter(x=data[mode + " 1"].abs(), y=data[mode + " 2"] *
-                   np.sign(data[mode + " 1"]), c=categories[c], label=c)
-    ax.legend()
-    ax.set_xlabel(f"|{mode} 1| /Å")
-    ax.set_ylabel(f"{mode} 2 x sign({mode} 1) /Å")
-    plt.savefig(f"out/anything_scatter_{mode}_category.png")
+    scatter(allData, categories, "category",
+            lambda x: x[mode + " 1"].abs(), f"|{mode} 1| /Å",
+            lambda y: signed_mode(y, mode), f"{mode} 2 x sign({mode} 1) /Å",
+            f"anything_scatter_{mode}_category")
+scatter(allData, categories, "category",
+        lambda x: x["wav x comp"], "wav x /Å",
+        lambda y: y["wav y comp"], "wav y /Å",
+        f"anything_scatter_wavxy_{analysis}")
+
+# b1 vs a2 plot
+b1 = allData["dom 1"].pow(2) + allData["dom 2"].pow(2) + allData["ruf 1"].pow(2) + allData["ruf 2"].pow(2) + allData["wav x 1"].pow(2) + allData["wav x 2"].pow(2)
+a2 = allData["sad 1"].pow(2) + allData["sad 2"].pow(2) + allData["wav y 1"].pow(2) + allData["wav y 2"].pow(2) + allData["pro 1"].pow(2) + allData["pro 2"].pow(2)
+b1 = np.sqrt(b1)
+a2 = np.sqrt(a2)
+allData["B1"] = b1
+allData["A2"] = a2
+scatter(allData, categories, "category",
+        lambda x: x["B1"], "b1 /Å",
+        lambda y: y["A2"], "a2 /Å",
+        "anything_scatter_B1A2_category")
