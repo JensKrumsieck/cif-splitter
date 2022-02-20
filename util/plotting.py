@@ -12,7 +12,8 @@ x_axis_labels = {
     "No_Subs": "Anzahl Substituenten",
     "title": "",
     "Axial": "",
-    "category": ""
+    "category": "",
+    "10_Pos": "Heteroatom"
 }
 
 
