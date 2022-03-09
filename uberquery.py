@@ -1,10 +1,11 @@
 import os
+from re import L
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 from util.analysis import groupAnalysis, perc_selector, perc_ext_selector, perc_min_selector
 from util.merge import merge
-from util.plotting import cm_to_inch, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
+from util.plotting import cm_to_inch, export_with_stackedbar_cavity, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 from util.settings import colors_min, colors_ext
 from util.scatter import scatter, signed_mode
@@ -25,21 +26,22 @@ if not os.path.exists("out"):
 for folder in ["corroles", "10-hetero", "N-hetero", "confused", "corrolazines", "N-Substituted", "isocorroles"]:
     if not os.path.exists(f"out/{folder}"):
         os.mkdir(f"out/{folder}")
+powerfolders = r"C:\Users\jenso\PowerFolders\Forschung\\"
 
 ### THE AWESOME MOMENT WHEN SCRIPTS WRITE YOUR THESIS 😎 ###
 ### ENTER PATHS OF UBERMERGED XLSX FILES HERE! ####
 ### UBERMERGE.py RESULTS CAN BE USED, YOU NEED TO ENTER LIGAND,AXIAL,... INFO BY HAND! ###
-path_corroles = [r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\TransitionMetals.xlsx",
-                 r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\MainGroup.xlsx",
-                 r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\fBlock.xlsx",
-                 r"D:\PowerFolders\Forschung\PorphyStruct Results\Corrole\FreeBases.xlsx"]
+path_corroles = [powerfolders + r"PorphyStruct Results\Corrole\TransitionMetals.xlsx",
+                 powerfolders + r"PorphyStruct Results\Corrole\MainGroup.xlsx",
+                 powerfolders + r"PorphyStruct Results\Corrole\fBlock.xlsx",
+                 powerfolders + r"PorphyStruct Results\Corrole\FreeBases.xlsx"]
 
-path_nConfused = [r"D:\Powerfolders\Forschung\PorphyStruct Results\NConfusedCorrole\NConfused.xlsx"]
-path_isocorroles = [r"D:\Powerfolders\Forschung\PorphyStruct Results\Isocorrole\Isocorroles.xlsx"]
-path_heterocorroles = [r"D:\Powerfolders\Forschung\PorphyStruct Results\Heterocorrole\Heterocorroles.xlsx"]
-path_nHeterocorroles = [r"D:\Powerfolders\Forschung\PorphyStruct Results\CoreHeterocorrole\CoreHeterocorroles.xlsx"]
-path_corrolazines = [r"D:\Powerfolders\Forschung\PorphyStruct Results\Corrolazine\Corrolazines.xlsx"]
-path_nSubstCorroles = [r"D:\Powerfolders\Forschung\PorphyStruct Results\NRCorroles\NRCorroles.xlsx"]
+path_nConfused = [powerfolders + r"PorphyStruct Results\NConfusedCorrole\NConfused.xlsx"]
+path_isocorroles = [powerfolders + r"PorphyStruct Results\Isocorrole\Isocorroles.xlsx"]
+path_heterocorroles = [powerfolders + r"PorphyStruct Results\Heterocorrole\Heterocorroles.xlsx"]
+path_nHeterocorroles = [powerfolders + r"PorphyStruct Results\CoreHeterocorrole\CoreHeterocorroles.xlsx"]
+path_corrolazines = [powerfolders + r"PorphyStruct Results\Corrolazine\Corrolazines.xlsx"]
+path_nSubstCorroles = [powerfolders + r"PorphyStruct Results\NRCorroles\NRCorroles.xlsx"]
 
 corroles_all = merge(path_corroles)  # all corroles
 corroles_metals = corroles_all.query("M != 'H'")  # all metal corroles
@@ -107,6 +109,8 @@ for key in df_to_name:
             df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
         export_with_stackedbar_doop(
             df_to_name[key], [.2, .4, .6, .8, 1, 1.5, 2, 1000], f"{key}_doop_wider")
+    export_with_stackedbar_cavity(df_to_name[key], [6, 6.5, 6.75, 7.00, 7.25, 7.5, 7.75, 8.0, 1000],
+                                  f"{key}_cavity")
     for analysis in analyses:
         export_with_stackedbars(
             df_to_name[key], analysis, f"{key}_{filenames[analysis]}", True, print_legend[analysis])
@@ -260,10 +264,14 @@ for mode in modes:
             lambda x: x[mode + " 1"].abs(), f"|{mode} 1| /Å",
             lambda y: signed_mode(y, mode), f"{mode} 2 x sign({mode} 1) /Å",
             f"anything_scatter_{mode}_category")
+    scatter(allData, categories, "category",
+            lambda x: x[mode + " comp"], f"{mode} /Å",
+            lambda y: y["Cavity"], f"N4 Cavity /Å²",
+            f"anything_scatter_{mode}_vs_Cavity")
 scatter(allData, categories, "category",
         lambda x: x["wav x comp"], "wav x /Å",
         lambda y: y["wav y comp"], "wav y /Å",
-        f"anything_scatter_wavxy_{analysis}")
+        f"anything_scatter_wavxy_category")
 
 # b1 vs a2 plot
 b1 = allData["dom 1"].pow(2) + allData["dom 2"].pow(2) + allData["ruf 1"].pow(2) + allData["ruf 2"].pow(2) + allData["wav x 1"].pow(2) + allData["wav x 2"].pow(2)

@@ -36,11 +36,19 @@ for mode in modes:
 
 
 def doopRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_selector) -> pd.DataFrame:
+    return FieldRanger(dataFrame, ranges, selector)
+
+
+def cavityRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_selector) -> pd.DataFrame:
+    return FieldRanger(dataFrame, ranges, selector, "Cavity")
+
+
+def FieldRanger(dataFrame: pd.DataFrame, ranges: list, selector: list = perc_selector, field: str = "Doop (exp.)") -> pd.DataFrame:
     start = 0
     newDF = pd.DataFrame()
     for range in ranges:
         bin = dataFrame.query(
-            f"`Doop (exp.)` >= {start} and `Doop (exp.)` < {range}")[selector]
+            f"`{field}` >= {start} and `{field}` < {range}")[selector]
         bin_analysis = pd.DataFrame(bin.mean()).T
         bin_analysis["range"] = f"[{start, {range}}]"
         bin_analysis["structures"] = bin.shape[0]
@@ -63,13 +71,21 @@ def groupAnalysis(dataFrame: pd.DataFrame, by: str, selector: list = perc_select
     return mean_grouped
 
 
-def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
-    dataFrame = dataFrame.query("`Doop (exp.)` > 0.0001")
-    bins = doopRanger(dataFrame, doopRanges, selector)
+def FieldAnalysis(dataFrame: pd.DataFrame, ranges: list, by: str = "range", selector: list = perc_selector, field: str = "Doop (exp.)") -> pd.DataFrame:
+    dataFrame = dataFrame.query(f"`{field}` > 0.0001")
+    bins = FieldRanger(dataFrame, ranges, selector, field)
     bins.fillna(0, inplace=True)
     res = groupAnalysis(bins, by, selector, False)
     res["structures"] = pd.Series(bins["structures"]).tolist()
     return res
+
+
+def doopAnalysis(dataFrame: pd.DataFrame, doopRanges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
+    return FieldAnalysis(dataFrame, doopRanges, by, selector)
+
+
+def cavityAnalysis(dataFrame: pd.DataFrame, ranges: list, by: str = "range", selector: list = perc_selector) -> pd.DataFrame:
+    return FieldAnalysis(dataFrame, ranges, by, selector, "Cavity")
 # endregion
 
 

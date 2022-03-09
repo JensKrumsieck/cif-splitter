@@ -83,6 +83,7 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
     if start == 0:  # auto set
         no0 = df.index.get_loc(df["structures"].ne(0).idxmax())
         start = x_pos[no0]
+
     ax.set(xlim=(start, ranges[-1]))
     ax.yaxis.set_major_formatter(
         matplotlib.ticker.StrMethodFormatter('{x:.0%}'))

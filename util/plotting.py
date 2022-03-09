@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 
-from util.analysis import CoordNo_Grouper, doopAnalysis, groupAnalysis, plot_selector, perc_selector
+from util.analysis import CoordNo_Grouper, cavityAnalysis, doopAnalysis, groupAnalysis, plot_selector, perc_selector
 from util.stackedbar import stackedbar, stackedbar_doop
 
 x_axis_labels = {
@@ -13,14 +13,15 @@ x_axis_labels = {
     "title": "",
     "Axial": "",
     "category": "",
-    "10_Pos": "Heteroatom"
+    "10_Pos": "Heteroatom",
+    "Cavity": "N4 Cavity"
 }
 
 
 def save_plot(filenameWithoutExtension: str):
     # plt.savefig(f"out/{filenameWithoutExtension}.svg")
     plt.savefig(f"out/{filenameWithoutExtension}.png")
-    plt.close()
+    plt.close('all')
     print(f"exported {filenameWithoutExtension}")
 
 
@@ -28,8 +29,14 @@ def cm_to_inch(value):
     return value/2.54
 
 
-def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector, start=0):
+def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector, start: float = 0):
     current = doopAnalysis(df, ranges, "range", selector)
+    stackedbar_doop(current, ranges, selector, start)
+    export(current, filenameWithoutExtension)
+
+
+def export_with_stackedbar_cavity(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector, start: float = 0):
+    current = cavityAnalysis(df, ranges, "range", selector)
     stackedbar_doop(current, ranges, selector, start)
     export(current, filenameWithoutExtension)
 
