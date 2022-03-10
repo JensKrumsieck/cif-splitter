@@ -1,4 +1,5 @@
 import os
+from unicodedata import category
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -7,6 +8,7 @@ from util.merge import merge
 from util.plotting import cm_to_inch, export_with_stackedbar_cavity, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 from util.scatter import scatter, signed_mode
+from util.settings import doop_axis_label
 import matplotlib
 matplotlib.use('Agg')
 
@@ -23,7 +25,7 @@ plt.rcParams["font.family"] = "Arial"
 # create paths:
 if not os.path.exists("out"):
     os.mkdir("out")
-for folder in ["corroles", "10-hetero", "N-hetero", "confused", "corrolazines", "N-Substituted", "isocorroles"]:
+for folder in ["corroles", "10-hetero", "N-hetero", "confused", "corrolazines", "N-Substituted", "isocorroles", "CoordCenters"]:
     if not os.path.exists(f"out/{folder}"):
         os.mkdir(f"out/{folder}")
 powerfolders = r"C:\Users\jenso\PowerFolders\Forschung\\"
@@ -109,7 +111,7 @@ for key in df_to_name:
             df_to_name[key], [.2, .4, .6, 1, 1000], f"{key}_doop")
         export_with_stackedbar_doop(
             df_to_name[key], [.2, .4, .6, .8, 1, 1.5, 2, 1000], f"{key}_doop_wider")
-    export_with_stackedbar_cavity(df_to_name[key], [6, 6.5, 6.75, 7.00, 7.25, 7.5, 7.75, 8.0, 1000],
+    export_with_stackedbar_cavity(df_to_name[key], [6, 6.5, 6.75, 7.00, 7.25, 7.5, 7.75, 8.0, 8.5, 1000],
                                   f"{key}_cavity")
     for analysis in analyses:
         export_with_stackedbars(
@@ -259,6 +261,23 @@ for analysis in groups:
             lambda x: x["wav x comp"], "wav x /Å",
             lambda y: y["wav y comp"], "wav y /Å",
             f"corroles/all_scatter_wavxy_{analysis}")
+
+for analysis in groups:
+    for mode in modes:
+        scatter(allData, colors, analysis,
+                lambda x: x[mode + " 1"].abs(), f"|{mode} 1| /Å",
+                lambda y: signed_mode(y, mode), f"{mode} 2 x sign({mode} 1) /Å",
+                f"anything_scatter_{mode}_{analysis}")        
+        scatter(allData, colors, analysis,
+                lambda x: x[mode + " comp"], f"{mode} /Å",
+                lambda y: y["Cavity"], f"N4 Cavity /Å²",
+                f"anything_scatter_{mode}_vs_cavity_{analysis}")
+
+    scatter(allData, colors, analysis,
+            lambda x: x["wav x comp"], "wav x /Å",
+            lambda y: y["wav y comp"], "wav y /Å",
+            f"anything_scatter_wavxy_{analysis}")
+
 for mode in modes:
     scatter(allData, categories, "category",
             lambda x: x[mode + " 1"].abs(), f"|{mode} 1| /Å",
@@ -267,11 +286,15 @@ for mode in modes:
     scatter(allData, categories, "category",
             lambda x: x[mode + " comp"], f"{mode} /Å",
             lambda y: y["Cavity"], f"N4 Cavity /Å²",
-            f"anything_scatter_{mode}_vs_Cavity")
+            f"anything_scatter_{mode}_vs_cavity_category")
 scatter(allData, categories, "category",
         lambda x: x["wav x comp"], "wav x /Å",
         lambda y: y["wav y comp"], "wav y /Å",
         f"anything_scatter_wavxy_category")
+scatter(allData, categories, "category",
+            lambda x: x["Doop (exp.)"], doop_axis_label,
+            lambda y: y["Cavity"], f"N4 Cavity /Å²",
+            f"anything_scatter_Doop_vs_cavity_category")
 
 # b1 vs a2 plot
 b1 = allData["dom 1"].pow(2) + allData["dom 2"].pow(2) + allData["ruf 1"].pow(2) + allData["ruf 2"].pow(2) + allData["wav x 1"].pow(2) + allData["wav x 2"].pow(2)
@@ -284,3 +307,7 @@ scatter(allData, categories, "category",
         lambda x: x["B1"], "b1 /Å",
         lambda y: y["A2"], "a2 /Å",
         "anything_scatter_B1A2_category")
+
+selectedTM = ["Ni", "Cu", "Fe", "Co", "H", "Mn", "Pd", "P"]
+for m in selectedTM:
+    export_with_stackedbars(allData.query("M == @m"), "category", f"CoordCenters/anything_{m}")
