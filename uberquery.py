@@ -1,5 +1,4 @@
 import os
-from re import L
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
@@ -7,8 +6,10 @@ from util.analysis import groupAnalysis, perc_selector, perc_ext_selector, perc_
 from util.merge import merge
 from util.plotting import cm_to_inch, export_with_stackedbar_cavity, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
-from util.settings import colors_min, colors_ext
 from util.scatter import scatter, signed_mode
+import matplotlib
+matplotlib.use('Agg')
+
 
 # plot styles
 plt.style.use(['science', 'nature', 'no-latex'])
@@ -19,7 +20,6 @@ plt.rcParams["axes.titlesize"] = 9
 plt.rcParams["xtick.labelsize"] = 9
 plt.rcParams["ytick.labelsize"] = 9
 plt.rcParams["font.family"] = "Arial"
-
 # create paths:
 if not os.path.exists("out"):
     os.mkdir("out")

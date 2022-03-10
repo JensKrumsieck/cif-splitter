@@ -1,3 +1,4 @@
+import gc
 from matplotlib import pyplot as plt
 import pandas as pd
 
@@ -21,7 +22,10 @@ x_axis_labels = {
 def save_plot(filenameWithoutExtension: str):
     # plt.savefig(f"out/{filenameWithoutExtension}.svg")
     plt.savefig(f"out/{filenameWithoutExtension}.png")
+    plt.cla()
+    plt.clf() 
     plt.close('all')
+    gc.collect()
     print(f"exported {filenameWithoutExtension}")
 
 

@@ -83,8 +83,11 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
     if start == 0:  # auto set
         no0 = df.index.get_loc(df["structures"].ne(0).idxmax())
         start = x_pos[no0]
-
-    ax.set(xlim=(start, ranges[-1]))
+    nol = df["structures"].to_numpy().nonzero()[0][-1] + 1
+    end = x_pos[-1]
+    if nol < len(x_pos):
+        end = x_pos[nol]
+    ax.set(xlim=(start, end))
     ax.yaxis.set_major_formatter(
         matplotlib.ticker.StrMethodFormatter('{x:.0%}'))
     ax.set_title("$\it{Anzahl}$ $\it{Strukturen}$", pad=12)
@@ -92,7 +95,7 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
         __print_labels(idx, ax, data, 1.0, sel[idx], c)
         if idx == len(ax.containers)-1:
             __print_structures(ax, df.drop(df.tail(1).index), c)
-        __print_modes(idx, ax, data, 1.0, width[0], [
+        __print_modes(idx, ax, data, 1.0, width[-1], [
                       " ".join(mode.split(" ")[:-1]) for mode in sel], c)
     return fig, ax
 
