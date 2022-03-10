@@ -13,7 +13,7 @@ class DataSource:
         self.categoryName = categoryName
         self.dataFrame = merge([inputFileName]).assign(category=self.categoryName)
         self.makeFolder()
-        inputFileName += "/all"
+        self.inputFileName += "/all"
 
     inputFileName: str
     outputFolder: str
