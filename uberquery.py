@@ -38,7 +38,8 @@ categories = {
     "N-Heterocorrole": scatter_colors_to_group[6],
     "Corrolazine": scatter_colors_to_group[7],
     "N-Subst. Corrole": scatter_colors_to_group[8],
-    "Norcorrole": scatter_colors_to_group[9]
+    "Norcorrole": scatter_colors_to_group[9],
+    "f-Block Corrole": scatter_colors_to_group[10]
 }
 
 colors = []
