@@ -2,7 +2,6 @@ import argparse
 import fnmatch
 import json
 import os
-from re import M
 import string
 import pandas as pd
 from util.element import periodic_table
@@ -125,9 +124,13 @@ for data in analysis:
             obj.wavx1 = sim[3]["Value"]
             obj.wavx2 = sim[9]["Value"]
             obj.wavy1 = sim[4]["Value"]
-            obj.wavy2 = sim[10]["Value"]
+            if len(sim) == 11:
+                obj.wavy2 = 0
+                obj.pro2 = sim[10]["Value"]
+            else:
+                obj.wavy2 = sim[10]["Value"]
+                obj.pro2 = sim[11]["Value"]
             obj.pro1 = sim[5]["Value"]
-            obj.pro2 = sim[11]["Value"]
             obj.doop_ext = analysis[json_Simulation][json_Doop]["Value"]
             row.ext_analysis = obj
         else:  # min basis
