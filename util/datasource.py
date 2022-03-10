@@ -13,6 +13,7 @@ class DataSource:
         self.categoryName = categoryName
         self.dataFrame = merge([inputFileName]).assign(category=self.categoryName)
         self.makeFolder()
+        inputFileName += "/all"
 
     inputFileName: str
     outputFolder: str
@@ -34,37 +35,37 @@ def create(outputfolder: str, dataFrame: pd.DataFrame) -> DataSource:
 # root = r"D:\PowerFolders\Forschung\PorphyStruct Results\\"
 root = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\\"
 corroles_transition = DataSource(root + r"Corrole\TransitionMetals.xlsx",
-                                 "corroles/corroles/transition metals",
+                                 "corroles/corroles/transition metals/",
                                  "Übergangsmetall Corrole")
 corroles_main = DataSource(root + r"Corrole\MainGroup.xlsx",
-                           "corroles/corroles/maingroup",
+                           "corroles/corroles/maingroup/",
                            "Hauptgruppen Corrole")
 corroles_free = DataSource(root + r"Corrole\FreeBases.xlsx",
-                           "corroles/corroles/freebase",
+                           "corroles/corroles/freebase/",
                            "Freie Corrol Basen")
 corroles_fBlock = DataSource(root + r"Corrole\fBlock.xlsx",
-                             "corroles/corroles/f-block",
+                             "corroles/corroles/f-block/",
                              "f-Block Corrole")
 corroles_iso = DataSource(root + r"Isocorrole/Isocorroles.xlsx",
-                          "corroles/isocorroles",
+                          "corroles/isocorroles/",
                           "Isocorrole")
 corroles_hetero = DataSource(root + r"Heterocorrole\Heterocorroles.xlsx",
-                             "corroles/hetero/10-hetero",
+                             "corroles/hetero/10-hetero/",
                              "10-Heterocorrole")
 corroles_nHetero = DataSource(root + r"CoreHeterocorrole\CoreHeterocorroles.xlsx",
-                              "corroles/hetero/n-hetero",
+                              "corroles/hetero/n-hetero/",
                               "N-Heterocorrole")
 corroles_nconfused = DataSource(root + r"NConfusedCorrole\NConfused.xlsx",
-                                "corroles/n-confused",
+                                "corroles/n-confused/",
                                 "N-Confused Corrole")
 corroles_nSubst = DataSource(root + r"NRCorroles\NRCorroles.xlsx",
-                             "corroles/hetero/n-substituted",
+                             "corroles/hetero/n-substituted/",
                              "N-subst. Corrole")
 corroles_corrolazines = DataSource(root + r"Corrolazine\Corrolazines.xlsx",
-                                   "corroles/hetero/corrolazines",
+                                   "corroles/hetero/corrolazines/",
                                    "Corrolazine")
 norcorroles = DataSource(root + r"Norcorrole\Norcorrole.xlsx",
-                         "norcorroles/all",
+                         "norcorroles",
                          "Norcorrole")
 
 corroles_df = create("corroles/corroles/d_f_block",
