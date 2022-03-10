@@ -30,8 +30,9 @@ def create(outputfolder: str, dataFrame: pd.DataFrame) -> DataSource:
     datasrc.dataFrame = dataFrame
     return datasrc
 
-root = r"D:\PowerFolders\Forschung\PorphyStruct Results\\"
-# root = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\\"
+
+# root = r"D:\PowerFolders\Forschung\PorphyStruct Results\\"
+root = r"C:\Users\jenso\PowerFolders\Forschung\PorphyStruct Results\\"
 corroles_transition = DataSource(root + r"Corrole\TransitionMetals.xlsx",
                                  "corroles/corroles/transition metals",
                                  "Übergangsmetall Corrole")

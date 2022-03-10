@@ -1,9 +1,7 @@
-
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
-from util.analysis import groupAnalysis, perc_selector, perc_ext_selector, perc_min_selector, modes
-from util.merge import merge
+from util.analysis import perc_selector, perc_ext_selector, perc_min_selector, modes
 from util.plotting import cm_to_inch, export_with_stackedbar_cavity, export_with_stackedbar_doop,  export_with_stackedbars, save_plot
 from util.scatterpie import make_scatter_pie
 from util.scatter import scatter, signed_mode
@@ -149,7 +147,7 @@ for group in groups:
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
                             f"corroles/corroles/transition_g{group}_coordNo")
-                        
+
 # doop plots for copper complexes with ext basis
 if datasource != corroles_free:
     CopperCorroles = datasource.dataFrame.query("M == 'Cu'")
