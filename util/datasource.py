@@ -1,4 +1,3 @@
-from calendar import c
 import os
 import pandas as pd
 from util.merge import merge
