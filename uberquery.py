@@ -152,9 +152,9 @@ for group in groups:
 if datasource != corroles_free:
     CopperCorroles = datasource.dataFrame.query("M == 'Cu'")
     export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "{datasource.outputFolder}_copper_doop", perc_ext_selector)
+        CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], datasource.outputFolder + "_copper_doop", perc_ext_selector)
     export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "{datasource.outputFolder}_copper_doop_wider", perc_ext_selector)
+        CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], datasource.outputFolder + "_copper_doop_wider", perc_ext_selector)
 
 
 selectedTM = ["Ni", "Cu", "Fe", "Co", "H", "Mn", "Pd", "P"]
