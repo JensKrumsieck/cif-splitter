@@ -130,32 +130,31 @@ export_with_stackedbar_doop(corroles_free.dataFrame.query("`δoop (min) %` < .03
                             "corroles/corroles/freebases_doop_ext")
 
 # group 4-5 by Metal
-export_with_stackedbars(corroles_transition.query(
-    "Group == 4 or Group == 5"), "M", "corroles/corroles/transition_g4g5_metals")
-
+export_with_stackedbars(corroles_transition.dataFrame.query(
+    "Group == 4 or Group == 5"), "M", corroles_transition.outputFolder + "g4g5_metals")
 # loop other groups
 groups = [6, 7, 8, 9, 10, 11, 12]
 for group in groups:
     # group by metal
-    group_dataset = corroles_transition.query(f"Group == {group}")
+    group_dataset = corroles_transition.dataFrame.query(f"Group == {group}")
 
     export_with_stackedbars(
-        group_dataset, "M", f"corroles/corroles/corroles/transition_g{group}_metals")
+        group_dataset, "M", corroles_transition.outputFolder + "g{group}_metals")
 
     # group by doop
     export_with_stackedbar_doop(
-        group_dataset, [.2, .4, .6, 1, 10000], f"corroles/corroles/transition_g{group}_doop")
+        group_dataset, [.2, .4, .6, 1, 10000], corroles_transition.outputFolder + "g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
-                            f"corroles/corroles/transition_g{group}_coordNo")
+                            corroles_transition.outputFolder + "g{group}_coordNo")
 
 # doop plots for copper complexes with ext basis
 if datasource != corroles_free:
     CopperCorroles = datasource.dataFrame.query("M == 'Cu'")
     export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], "{datasource.outputFolder}_copper_doop", perc_ext_selector)
+        CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], datasource.outputFolder + "_copper_doop", perc_ext_selector)
     export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], "{datasource.outputFolder}_copper_doop_wider", perc_ext_selector)
+        CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], datasource.outputFolder + "_copper_doop_wider", perc_ext_selector)
 
 
 selectedTM = ["Ni", "Cu", "Fe", "Co", "H", "Mn", "Pd", "P"]
@@ -163,7 +162,7 @@ for m in selectedTM:
     export_with_stackedbars(anything.dataFrame.query("M == @m"), "category", f"any_coordination_center_{m}")
 
 # region 10hetero n
-export_with_stackedbars(corroles_hetero, "10_Pos", "10-hetero/all_heteroatom", True, True)
+export_with_stackedbars(corroles_hetero.dataFrame, "10_Pos", corroles_hetero.outputFolder + "all_heteroatom", True, True)
 # endregion
 
 # SELECTED MAINGROUP COMPLEXES (PorphyStruct Paper)
@@ -180,7 +179,7 @@ tin_5c = mgcn5.query("M == 'Sn'")[perc_selector].mean()
 tin_5c["M"] = "Sn"
 sel_comp = pd.DataFrame([phos_6c, gall_6c, germ_5c, tin_5c])
 export_with_stackedbars(
-    sel_comp, "M", "corroles/corroles/maingroup/selectedMetals", False)
+    sel_comp, "M", corroles_main.outputFolder + "selectedMetals", False)
 
 # region 3d/4d/5d
 m3d = ["Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn"]
@@ -193,5 +192,5 @@ d3compl = d3compl.assign(title="3d")
 d4compl = d4compl.assign(title="4d")
 d5compl = d5compl.assign(title="5d")
 export_with_stackedbars(
-    pd.concat([d3compl, d4compl, d5compl]), "title", "corroles/corroles/transition metals/dwise")
+    pd.concat([d3compl, d4compl, d5compl]), "title", corroles_transition.outputFolder + "dwise")
 # endregion

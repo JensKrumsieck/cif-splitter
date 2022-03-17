@@ -1,4 +1,3 @@
-from calendar import c
 import os
 import pandas as pd
 from util.merge import merge
@@ -9,11 +8,10 @@ class DataSource:
         if(inputFileName == ""):
             return
         self.inputFileName = inputFileName
-        self.outputFolder = outputFolder
+        self.outputFolder = outputFolder + "/all"
         self.categoryName = categoryName
         self.dataFrame = merge([inputFileName]).assign(category=self.categoryName)
         self.makeFolder()
-        self.inputFileName += "/all"
 
     inputFileName: str
     outputFolder: str
@@ -66,7 +64,7 @@ corroles_corrolazines = DataSource(root + r"Corrolazine\Corrolazines.xlsx",
                                    "corroles/hetero/corrolazines/",
                                    "Corrolazine")
 norcorroles = DataSource(root + r"Norcorrole\Norcorrole.xlsx",
-                         "norcorroles",
+                         "norcorroles/",
                          "Norcorrole")
 
 corroles_df = create("corroles/corroles/d_f_block",
