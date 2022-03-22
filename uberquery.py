@@ -141,7 +141,7 @@ export_with_stackedbar_doop(corroles_free.dataFrame.query("`δoop (min) %` < .03
 
 # group 4-5 by Metal
 export_with_stackedbars(corroles_transition.dataFrame.query(
-    "Group == 4 or Group == 5"), "M", corroles_transition.outputFolder + "g4g5_metals")
+    "Group == 4 or Group == 5"), "M", corroles_transition.outputFolder + "_g4g5_metals")
 # loop other groups
 groups = [6, 7, 8, 9, 10, 11, 12]
 for group in groups:
@@ -149,11 +149,11 @@ for group in groups:
     group_dataset = corroles_transition.dataFrame.query(f"Group == {group}")
 
     export_with_stackedbars(
-        group_dataset, "M", corroles_transition.outputFolder + f"g{group}_metals")
+        group_dataset, "M", corroles_transition.outputFolder + f"_g{group}_metals")
 
     # group by doop
     export_with_stackedbar_doop(
-        group_dataset, [.2, .4, .6, 1, 10000], corroles_transition.outputFolder + f"g{group}_doop")
+        group_dataset, [.2, .4, .6, 1, 10000], corroles_transition.outputFolder + f"_g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
                             corroles_transition.outputFolder + f"g{group}_coordNo")
