@@ -42,12 +42,15 @@ categories = {
     "f-Block Corrole": scatter_colors_to_group[10]
 }
 
+df = anything.dataFrame.groupby("category").mean()
+df.plot.bar(y="Cavity")
+save_plot(anything.outputFolder + "__cavities_per_cat")
+
 colors = []
 # loops
 for datasource in dataSourceLoop:
     # add sum of waving col
     datasource.dataFrame["sum wav"] = datasource.dataFrame["wav x comp"] + datasource.dataFrame["wav y comp"]
-
     fig, ax = make_scatter_pie(datasource.dataFrame)
     save_plot(datasource.outputFolder + "_periodic_table")  # makes periodic table plot
     # Doop Plots
@@ -118,6 +121,13 @@ for datasource in dataSourceLoop:
                         lambda x: x["B1"], "b1 /Å",
                         lambda y: y["A2"], "a2 /Å",
                         f"{datasource.outputFolder}_scatter_B1A2_{analysis}")
+    # doop plots for copper complexes with ext basis
+    if datasource.dataFrame.query("M == 'Cu'").index.shape[0] > 0:
+        CopperCorroles = datasource.dataFrame.query("M == 'Cu'")
+        export_with_stackedbar_doop(
+            CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], datasource.outputFolder + "_copper_doop", perc_ext_selector)
+        export_with_stackedbar_doop(
+            CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], datasource.outputFolder + "_copper_doop_wider", perc_ext_selector)
 
 
 # additional doop plots
@@ -148,13 +158,7 @@ for group in groups:
     export_with_stackedbars(group_dataset, "Coord_No",
                             corroles_transition.outputFolder + "g{group}_coordNo")
 
-# doop plots for copper complexes with ext basis
-if datasource != corroles_free:
-    CopperCorroles = datasource.dataFrame.query("M == 'Cu'")
-    export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 1000], datasource.outputFolder + "_copper_doop", perc_ext_selector)
-    export_with_stackedbar_doop(
-        CopperCorroles,  [.6, 0.8, 1, 1.5, 2, 1000], datasource.outputFolder + "_copper_doop_wider", perc_ext_selector)
+
 
 
 selectedTM = ["Ni", "Cu", "Fe", "Co", "H", "Mn", "Pd", "P"]

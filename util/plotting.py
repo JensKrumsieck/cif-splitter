@@ -1,7 +1,7 @@
 import gc
 from matplotlib import pyplot as plt
 import pandas as pd
-
+from util.settings import cavity_axis_label
 from util.analysis import CoordNo_Grouper, cavityAnalysis, doopAnalysis, groupAnalysis, plot_selector, perc_selector
 from util.stackedbar import stackedbar, stackedbar_doop
 
@@ -41,7 +41,7 @@ def export_with_stackedbar_doop(df: pd.DataFrame, ranges: list[float],  filename
 
 def export_with_stackedbar_cavity(df: pd.DataFrame, ranges: list[float],  filenameWithoutExtension: str, selector: list[str] = perc_selector, start: float = 0):
     current = cavityAnalysis(df, ranges, "range", selector)
-    stackedbar_doop(current, ranges, selector, start)
+    stackedbar_doop(current, ranges, selector, start, cavity_axis_label)
     export(current, filenameWithoutExtension)
 
 

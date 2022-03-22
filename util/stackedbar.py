@@ -59,7 +59,7 @@ def __print_modes(idx: int, ax: Axes, df: pd.DataFrame, max_y: float, width: flo
                 ha='right', va='top', fontsize=8, weight="bold")
 
 
-def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector, start=0) -> Tuple[Figure, Axes]:
+def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str] = plot_selector, start=0, x_title="") -> Tuple[Figure, Axes]:
     if len(y_selector) > 8:
         y_selector = perc_ext_rev
     elif "comp" not in y_selector[3]:
@@ -78,7 +78,10 @@ def stackedbar_doop(df: pd.DataFrame, ranges: list[float], y_selector: list[str]
                width=width, color=le_colors[idx], bottom=last)
         last += data[c]
     plt.xticks(x_pos, x_pos)
-    ax.set_xlabel(doop_axis_label)
+    if x_title == "":
+        ax.set_xlabel(doop_axis_label)
+    else:
+        ax.set_xlabel(x_title)
     ax.set(ylim=(0, 1))
     if start == 0:  # auto set
         no0 = df.index.get_loc(df["structures"].ne(0).idxmax())
