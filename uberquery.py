@@ -149,14 +149,14 @@ for group in groups:
     group_dataset = corroles_transition.dataFrame.query(f"Group == {group}")
 
     export_with_stackedbars(
-        group_dataset, "M", corroles_transition.outputFolder + "g{group}_metals")
+        group_dataset, "M", corroles_transition.outputFolder + f"g{group}_metals")
 
     # group by doop
     export_with_stackedbar_doop(
-        group_dataset, [.2, .4, .6, 1, 10000], corroles_transition.outputFolder + "g{group}_doop")
+        group_dataset, [.2, .4, .6, 1, 10000], corroles_transition.outputFolder + f"g{group}_doop")
     # group by coord number
     export_with_stackedbars(group_dataset, "Coord_No",
-                            corroles_transition.outputFolder + "g{group}_coordNo")
+                            corroles_transition.outputFolder + f"g{group}_coordNo")
 
 
 
