@@ -42,6 +42,8 @@ categories = {
     "f-Block Corrole": scatter_colors_to_group[10]
 }
 
+anything.dataFrame.to_excel("all-data-merged")
+
 df = anything.dataFrame.groupby("category").mean()
 df.plot.bar(y="Cavity")
 save_plot(anything.outputFolder + "__cavities_per_cat")
