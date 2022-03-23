@@ -166,7 +166,7 @@ for m in selectedTM:
     export_with_stackedbars(anything.dataFrame.query("M == @m"), "category", f"any_coordination_center_{m}")
 
 # region 10hetero n
-export_with_stackedbars(corroles_hetero.dataFrame, "10_Pos", corroles_hetero.outputFolder + "all_heteroatom", True, True)
+export_with_stackedbars(corroles_hetero.dataFrame, "10_Pos", corroles_hetero.outputFolder + "_heteroatom", True, True)
 # endregion
 
 # SELECTED MAINGROUP COMPLEXES (PorphyStruct Paper)
@@ -183,7 +183,7 @@ tin_5c = mgcn5.query("M == 'Sn'")[perc_selector].mean()
 tin_5c["M"] = "Sn"
 sel_comp = pd.DataFrame([phos_6c, gall_6c, germ_5c, tin_5c])
 export_with_stackedbars(
-    sel_comp, "M", corroles_main.outputFolder + "selectedMetals", False)
+    sel_comp, "M", corroles_main.outputFolder + "_selectedMetals", False)
 
 # region 3d/4d/5d
 m3d = ["Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn"]
