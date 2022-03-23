@@ -42,7 +42,7 @@ categories = {
     "f-Block Corrole": scatter_colors_to_group[10]
 }
 
-anything.dataFrame.to_excel("all-data-merged.xlsx")
+anything.dataFrame.to_excel("out/all-data-merged.xlsx")
 
 df = anything.dataFrame.groupby("category").mean()
 df.plot.bar(y="Cavity")
