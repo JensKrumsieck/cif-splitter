@@ -1,9 +1,0 @@
-pandas
-originpro
-matplotlib
-numpy
-autopep8
-SciencePlots
-openpyxl
-nbstripout
-kaleido
