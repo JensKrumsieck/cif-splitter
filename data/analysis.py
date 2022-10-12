@@ -12,7 +12,7 @@ class Analysis:
     Ruffling1: float
     WavingX1: float
     WavingY1: float
-    Propellering: float
+    Propellering1: float
     Doming2: float
     Saddling2: float
     Ruffling2: float

@@ -33,8 +33,11 @@ for file in filenames:
     with open(metaFile, "r") as meta:
         raw = json.load(meta)
         ccdc = raw["Title"].split(".")[0]
+        group = raw["Group"]
+        if group == "0": 
+            group = "Ln"
         crystal = Crystal(ccdc, raw["Class"], raw["Ligand"], raw["Metal"],
-                          raw["Group"], raw["AxialLigand"], raw["CoordNo"],
+                          group, raw["AxialLigand"], raw["CoordNo"],
                           raw["SubstNo"], raw["CoSolv"])
     for root, dir, files in os.walk(os.path.dirname(file)):
         currentAnalysis: Analysis
@@ -82,3 +85,4 @@ for crystal in data:
         
 df = pd.DataFrame(rows)
 df.to_excel(path + r"\Results.xlsx")
+print("Done!")

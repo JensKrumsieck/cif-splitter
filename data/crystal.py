@@ -8,7 +8,7 @@ class Crystal:
     Class: str
     Ligand: str
     Metal: str
-    Group: int
+    Group: str
     AxialLigand: str
     CoordNo: int
     SubstNo: int
