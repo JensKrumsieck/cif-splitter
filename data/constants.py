@@ -1,8 +1,8 @@
-analysisColumns = ["Doming1", "Saddling1", "Ruffling1", "WavingX1", "WavingY1", "Propellering1",
-                   "Doming2", "Saddling2", "Ruffling2", "WavingX2", "WavingY2", "Propellering2"]
 modes = ["Doming", "Saddling", "Ruffling", "WavingX", "WavingY", "Propellering"]
+analysisColumns = [m + "1" for m in modes] + [m + "2" for m in modes]
 compColumns = [m + " comp" for m in modes]
 percColumns = [m+"%" for m in analysisColumns]
+percCompColumns = [m+"%" for m in compColumns]
 
 colors_min = ["#999999", "#666699", "#3BC371", "#FEC211", "#336699", "#EF0000"]
 colors_ext = ["#99867A", "#6B67BC", "#009999",
