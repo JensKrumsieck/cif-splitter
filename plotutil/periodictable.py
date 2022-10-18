@@ -7,9 +7,10 @@ from matplotlib.lines import Line2D
 from mathutil.analyze import groupBy
 from plotutil.misc import cm_to_inch
 import matplotlib.pyplot as plt
-from data.constants import colors_min, percCompColumns
+from data.constants import colors_min, percCompColumns, percColumns, colors_ext
 import pandas as pd
 import os
+
 
 def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax):
     markers = []
@@ -28,7 +29,12 @@ def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax
     for marker in markers:
         ax.scatter(pos_x, pos_y, **marker)
 
-def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
+
+def make_scatter_pie(df: pd.DataFrame, ext: bool = False) -> Tuple[Figure, Axes]:
+    columns = percCompColumns
+    if ext: 
+        columns = percColumns
+
     fig, ax = plt.subplots(1, figsize=(cm_to_inch(16), cm_to_inch(8)))
     plt.box(False)
     ax.set(xlim=(0.25, 18.75), ylim=(9.75, .25))
@@ -37,15 +43,27 @@ def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
     ax.minorticks_off()
     ax.xaxis.tick_top()
     ax.tick_params(axis='both', which='both', length=0)
-    anal = groupBy(df, percCompColumns, "Metal")
+    anal = groupBy(df, columns, "Metal")
     custom_lines = [Line2D([0], [0], color=colors_min[0], lw=4),
                     Line2D([0], [0], color=colors_min[1], lw=4),
                     Line2D([0], [0], color=colors_min[2], lw=4),
                     Line2D([0], [0], color=colors_min[3], lw=4),
                     Line2D([0], [0], color=colors_min[4], lw=4),
                     Line2D([0], [0], color=colors_min[5], lw=4)]
+    if ext:
+        custom_lines += [Line2D([0], [0], color=colors_ext[0], lw=4),
+                         Line2D([0], [0], color=colors_ext[1], lw=4),
+                         Line2D([0], [0], color=colors_ext[2], lw=4),
+                         Line2D([0], [0], color=colors_ext[3], lw=4),
+                         Line2D([0], [0], color=colors_ext[4], lw=4),
+                         Line2D([0], [0], color=colors_ext[5], lw=4)]
+    items = ['dom', 'sad', 'ruf', 'wav x', 'wav y', 'pro']
+    if ext: 
+        items += ['dom2', 'sad2', 'ruf2', 'wav x2', 'wav y2', 'pro2']
+
     legend = plt.legend(
-        custom_lines, ['dom', 'sad', 'ruf', 'wav x', 'wav y', 'pro'], frameon=1, loc=9, ncol=3)
+        custom_lines, items, frameon=1, loc=2 ,ncol=3, bbox_to_anchor =(.2,.99),
+        )
     frame = legend.get_frame()
     frame.set_color('white')
 
@@ -59,17 +77,20 @@ def make_scatter_pie(df: pd.DataFrame) -> Tuple[Figure, Axes]:
         sym = row["Symbol"]
         res = anal.query("Metal==@sym")
         if(res.size == 0):
-            plt.text(row["Group"], row["Period"], row["Symbol"], fontsize=8,
+            plt.text(row["Group"], row["Period"], sym, fontsize=8,
                      horizontalalignment='center',
                      verticalalignment='center')
             continue
         list = []
-        for m in percCompColumns:
+        for m in columns:
             if "Doop" in m:
                 continue
             list.append(res[m].values[0])
+        colors = colors_min
+        if ext:
+            colors += colors_ext
         draw_pie(row["Group"], row["Period"], list,
-                 res["DoopExp"]*400, colors_min, ax)
+                 res["DoopExp"]*400, colors, ax)
     return fig, ax
 
 
