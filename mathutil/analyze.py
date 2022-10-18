@@ -21,6 +21,7 @@ def groupBy(df: pd.DataFrame, selectedFields: list[str], by: str):
     mean = grouped.mean()
     for sel in selectedFields:
         mean[sel.replace('%', ' ').strip()] = mean[sel]*mean["DoopExp"]
+    mean["structures"] = grouped.size().values
     return mean
 
 def fieldAnalysis(df: pd.DataFrame, ranges: list[float], selectedFields: list[str],  byField: str):

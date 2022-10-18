@@ -51,13 +51,11 @@ def __print_labels(ax: Axes, df: pd.DataFrame, max_y: float, selector: str, c: C
 def __print_modes(idx: int, ax: Axes, max_y: float, width: float, selector: str, c: Container):
     offset = -.02
     mode = ""
-    if len(selector) > 8:
-        pattern = r"^([a-zA-Z]{3})(?:.*)(\d)"
-        match = re.match(pattern, selector[idx])
-        for g in match.groups():
-            mode += g.lower() + " "
-    else:
-        mode = selector[idx].lower()[0:3]
+    pattern = r"^([a-zA-Z]{3})(?:[a-z]*)?(X|Y)?(\d)?"
+    match = re.match(pattern, selector[idx])
+    for g in match.groups():
+        if(g != None):
+            mode += " "+g.lower()
     legend = [mode if v.get_height() > 0.03 *
               max_y and idv == len(c)-1 else '' for idv, v in enumerate(c)]
     for text, bar in zip(legend, c):
@@ -102,3 +100,33 @@ def plot_doop(df: pd.DataFrame, ranges: list[float], selectedFields: list[str], 
             __print_structures(ax, df.drop(df.tail(1).index), c)
         __print_modes(idx, ax, 1.0, width[-1], sel, c)
     return fig, ax
+
+
+def plot(df: pd.DataFrame, x_label: str, y_selector: list[str], print_no: bool = True, print_legend: bool = False, tickRotation: int = 0, ncol:int=1) -> Tuple[Figure, Axes]:
+    fig, ax, selector, colors = __prepare(y_selector)
+    width = __width()
+    df.plot.bar(y=selector, stacked=True, color=colors,
+                width=width, edgecolor='black', linewidth=.3, ax=ax, legend=print_legend)
+    if print_legend:
+        handles, labels = ax.get_legend_handles_labels()
+        labels = [" ".join(i.split(" ")[:-1])
+                  for i in selector]
+        ax.legend(handles=handles[::-1], labels=labels[::-1],
+                  loc=2, prop={'size': 8}, labelspacing=0.1, ncol=ncol)
+
+    ax.tick_params(which="minor", axis="x", length=0)
+    ax.set(xlim=(-0.5, len(df)-.5))
+    ax.set_ylabel(constants.doop_axis_label)
+    ax.set_xlabel(x_label)
+    max_doop = df["DoopExp"].max()
+    ax.set(ylim=(0, max_doop + max_doop * .1))
+    if print_no:
+        ax.set_title("$\it{Anzahl}$ $\it{Strukturen}$", y=1.0, pad=-10)
+    for idx, c in enumerate(ax.containers):
+        if print_no and idx == len(ax.containers)-1:
+            __print_structures(ax, df, c)
+        __print_labels(ax, df, max_doop, selector[idx], c)
+        if not print_legend:
+            __print_modes(idx, ax, max_doop, width, selector, c)
+    plt.xticks(rotation=tickRotation)
+    return fig,ax

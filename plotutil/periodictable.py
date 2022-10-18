@@ -14,17 +14,18 @@ import os
 
 def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax):
     markers = []
-    previous = 0
+    previous = 0    
+    ratios = [m/sum(ratios) for m in ratios]
 
     for color, ratio in zip(colors, ratios):
         cur = 2*np.pi*ratio+previous
-        angles = np.linspace(previous, cur, 30)
+        angles = np.linspace(previous, cur, 60)
         x = [0] + np.cos(angles).tolist() + [0]
         y = [0] + np.sin(angles).tolist() + [0]
         xy = np.column_stack([x, y])
         previous = cur
         markers.append({'marker': xy, 's': np.abs(
-            xy).max()**2*size, 'facecolor': color})
+            xy).max()**2*np.array(size), 'facecolor': color})
 
     for marker in markers:
         ax.scatter(pos_x, pos_y, **marker)
@@ -32,9 +33,15 @@ def draw_pie(pos_x: int, pos_y: int, ratios: list, size: float, colors: list, ax
 
 def make_scatter_pie(df: pd.DataFrame, ext: bool = False) -> Tuple[Figure, Axes]:
     columns = percCompColumns
-    if ext: 
+    if ext:
         columns = percColumns
 
+    colors = colors_min
+    if ext:
+        colors += colors_ext
+    colors = colors[::-1]
+
+    columns = columns[::-1]
     fig, ax = plt.subplots(1, figsize=(cm_to_inch(16), cm_to_inch(8)))
     plt.box(False)
     ax.set(xlim=(0.25, 18.75), ylim=(9.75, .25))
@@ -58,12 +65,12 @@ def make_scatter_pie(df: pd.DataFrame, ext: bool = False) -> Tuple[Figure, Axes]
                          Line2D([0], [0], color=colors_ext[4], lw=4),
                          Line2D([0], [0], color=colors_ext[5], lw=4)]
     items = ['dom', 'sad', 'ruf', 'wav x', 'wav y', 'pro']
-    if ext: 
+    if ext:
         items += ['dom2', 'sad2', 'ruf2', 'wav x2', 'wav y2', 'pro2']
 
     legend = plt.legend(
-        custom_lines, items, frameon=1, loc=2 ,ncol=3, bbox_to_anchor =(.2,.99),
-        )
+        custom_lines, items, frameon=1, loc=2, ncol=3, bbox_to_anchor=(.2, .99),
+    )
     frame = legend.get_frame()
     frame.set_color('white')
 
@@ -86,9 +93,6 @@ def make_scatter_pie(df: pd.DataFrame, ext: bool = False) -> Tuple[Figure, Axes]
             if "Doop" in m:
                 continue
             list.append(res[m].values[0])
-        colors = colors_min
-        if ext:
-            colors += colors_ext
         draw_pie(row["Group"], row["Period"], list,
                  res["DoopExp"]*400, colors, ax)
     return fig, ax

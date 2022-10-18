@@ -17,3 +17,16 @@ scatter_colors = ["#222222", "#F3C300", "#875691", "#F38500", "#A1CBF1",
 scatter_colors_to_group = {0: scatter_colors[0], 1: scatter_colors[1], 2: scatter_colors[2], 3: scatter_colors[3], 4: scatter_colors[4], 5: scatter_colors[5],
                            6: scatter_colors[6], 7: scatter_colors[7], 8: scatter_colors[8], 9: scatter_colors[9], 10: scatter_colors[10], 11: scatter_colors[11],
                            12: scatter_colors[12],  13: scatter_colors[13], 14: scatter_colors[14], 15: scatter_colors[15], "Ln": scatter_colors[16]}
+
+x_axis_labels = {
+    "Coord_No": "Koordinationszahl",
+    "Group": "Gruppe",
+    "M": "",
+    "Ligand": "Ligand",
+    "No_Subs": "Anzahl Substituenten",
+    "title": "",
+    "Axial": "",
+    "category": "",
+    "10_Pos": "Heteroatom",
+    "Cavity": "N4 Cavity"
+}
