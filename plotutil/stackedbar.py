@@ -12,7 +12,7 @@ from data import constants
 def __prepare(selectedFields: list[str]) -> Tuple[Figure, Axes, list[str], list[str]]:
     selector = selectedFields[::1]
     if len(selectedFields) > 8:
-        selector = [m + "2%" for m in constants.modes] + [m + "1%" for m in constants.modes]
+        selector = [m + "2" for m in constants.modes] + [m + "1" for m in constants.modes]
     selector = selector[::-1]
     colors = constants.colors_min[::-1] + constants.colors_ext[::-1]
     fix, ax = plt.subplots()
@@ -42,7 +42,7 @@ def __print_structures(ax: Axes, df: pd.DataFrame, c: Container):
 
 
 def __print_labels(ax: Axes, df: pd.DataFrame, max_y: float, selector: str, c: Container):
-    labels = ["{:.0%}".format(df[selector].iloc[idv]) if v.get_height() > 0.03 *
+    labels = ["{:.0%}".format(df[selector].iloc[idv]) if v.get_height() > 0.04 *
               max_y else '' for idv, v in enumerate(c)]
     ax.bar_label(c, labels=labels, label_type='center',
                  color="white", fontsize=8, fontweight=700)
@@ -56,7 +56,7 @@ def __print_modes(idx: int, ax: Axes, max_y: float, width: float, selector: str,
     for g in match.groups():
         if(g != None):
             mode += " "+g.lower()
-    legend = [mode if v.get_height() > 0.03 *
+    legend = [mode if v.get_height() > 0.04 *
               max_y and idv == len(c)-1 else '' for idv, v in enumerate(c)]
     for text, bar in zip(legend, c):
         ax.text(bar.get_x() + bar.get_width() + offset * width, bar.get_height() + bar.get_y() + offset / 5,
@@ -66,6 +66,8 @@ def __print_modes(idx: int, ax: Axes, max_y: float, width: float, selector: str,
 
 def plot_doop(df: pd.DataFrame, ranges: list[float], selectedFields: list[str], start=0, x_title="") -> Tuple[Figure, Axes]:
     fig, ax, selector, colors = __prepare(selectedFields)
+    if '%' not in selector[0]:
+        selector = [m + "%" for m in selector]
     ranges = ranges[:-1]
     width = __width(ranges)
     sel = [c for c in selector if "Doop" not in c]
@@ -109,10 +111,11 @@ def plot(df: pd.DataFrame, x_label: str, y_selector: list[str], print_no: bool =
                 width=width, edgecolor='black', linewidth=.3, ax=ax, legend=print_legend)
     if print_legend:
         handles, labels = ax.get_legend_handles_labels()
-        labels = [" ".join(i.split(" ")[:-1])
-                  for i in selector]
+        labels = [m.split(" ")[0] for m in selector]
         ax.legend(handles=handles[::-1], labels=labels[::-1],
-                  loc=2, prop={'size': 8}, labelspacing=0.1, ncol=ncol)
+                  loc=9, prop={'size': 8}, labelspacing=0.1, ncol=ncol,
+                  borderpad=1.5
+                  )
 
     ax.tick_params(which="minor", axis="x", length=0)
     ax.set(xlim=(-0.5, len(df)-.5))
@@ -125,7 +128,7 @@ def plot(df: pd.DataFrame, x_label: str, y_selector: list[str], print_no: bool =
     for idx, c in enumerate(ax.containers):
         if print_no and idx == len(ax.containers)-1:
             __print_structures(ax, df, c)
-        __print_labels(ax, df, max_doop, selector[idx], c)
+        __print_labels(ax, df, max_doop, selector[idx]+"%", c)
         if not print_legend:
             __print_modes(idx, ax, max_doop, width, selector, c)
     plt.xticks(rotation=tickRotation)

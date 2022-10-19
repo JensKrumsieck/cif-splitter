@@ -19,14 +19,15 @@ scatter_colors_to_group = {0: scatter_colors[0], 1: scatter_colors[1], 2: scatte
                            12: scatter_colors[12],  13: scatter_colors[13], 14: scatter_colors[14], 15: scatter_colors[15], "Ln": scatter_colors[16]}
 
 x_axis_labels = {
-    "Coord_No": "Koordinationszahl",
+    "CoordNo": "Koordinationszahl",
     "Group": "Gruppe",
-    "M": "",
+    "Metal": "",
     "Ligand": "Ligand",
-    "No_Subs": "Anzahl Substituenten",
+    "SubstNo": "Anzahl Substituenten",
     "title": "",
-    "Axial": "",
+    "AxialLigand": "",
     "category": "",
     "10_Pos": "Heteroatom",
-    "Cavity": "N4 Cavity"
+    "Cavity": "N4 Cavity",
+    "CoSolv": "Kokristallisat"
 }
