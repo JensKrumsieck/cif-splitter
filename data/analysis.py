@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-
+from typing import Optional
+import numpy as np
 
 @dataclass
 class Analysis:
@@ -20,3 +21,5 @@ class Analysis:
     WavingY2: float
     Propellering2: float
     Cavity: float
+    MetalToN4: Optional[float] = 0
+    MetalToMean: Optional[float] = 0

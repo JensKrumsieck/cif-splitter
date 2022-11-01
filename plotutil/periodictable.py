@@ -123,3 +123,7 @@ def df_periodic_table() -> pd.DataFrame:
             df = pd.concat([df, pd.DataFrame(data)])
         df.set_index("Number", inplace=True)
     return df
+
+m3d = ["Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn"]
+m4d = ["Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd"]
+m5d = ["La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]

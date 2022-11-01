@@ -73,6 +73,13 @@ for file in filenames:
                                     dom2, sad2, ruf2, wavx2, wavy2, pro2,
                                     raw["Cavity"]["Value"]
                                     )
+                if crystal.Metal != "H":
+                    planeDist:list = raw["PlaneDistances"]
+                    if planeDist != None and len(planeDist) != 0:
+                        m2n4 = [x for x in planeDist if "N4" in x["Key"]]
+                        analysis.MetalToN4 = float(m2n4[0]["Value"])
+                        m2mp = [x for x in planeDist if "Mean" in x["Key"]]
+                        analysis.MetalToMean = float(m2mp[0]["Value"])
                 crystal.Analyses.append(analysis)
     data.append(crystal)
 
