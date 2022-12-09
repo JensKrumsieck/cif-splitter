@@ -12,3 +12,8 @@ def createCompData(df: pd.DataFrame) -> pd.DataFrame:
     for col in constants.modes:
         df[col + " comp"] = __compValue(df[col+"1"], df[col + "2"])
     return df
+
+def createSumData(df: pd.DataFrame) -> pd.DataFrame:
+    for col in constants.modes:
+        df[col + " summed"] = df[col+"1"]+df[col+"2"]
+    return df

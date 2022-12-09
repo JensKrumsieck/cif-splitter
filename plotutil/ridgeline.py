@@ -12,7 +12,8 @@ def plot(dataset: pd.DataFrame, categories: list[str], column: str,
          y_axis: str, y_axis_title: str,
          xlim: Tuple[int, int],
          ylim: Tuple[int, int],
-         colors: list[str]) -> Tuple[Figure, list[Axes]]:
+         colors: list[str],
+         bandwidth=.1) -> Tuple[Figure, list[Axes]]:
     gs = (gsp.GridSpec(len(categories), 1))
     fig = plt.figure()
     i = 0
@@ -23,7 +24,7 @@ def plot(dataset: pd.DataFrame, categories: list[str], column: str,
         x = np.array(dataset[dataset[column] == cat][y_axis])
         if len(x) != 0:
             x_d = np.linspace(xstart, xend, 1000)
-            kde = KernelDensity(kernel="gaussian", bandwidth=.1)
+            kde = KernelDensity(kernel="gaussian", bandwidth=bandwidth)
             kde.fit(x[:, None])
             logprob = kde.score_samples(x_d[:, None])
             aos.append(fig.add_subplot(gs[i:i+1, 0:]))
@@ -42,7 +43,7 @@ def plot(dataset: pd.DataFrame, categories: list[str], column: str,
             spines = ["top", "right", "left", "bottom"]
             for s in spines:
                 aos[-1].spines[s].set_visible(False)
-                aos[-1].text(xstart -0.02, 0, r"$\bf{" + cat + "}$" + f"\n(n = {len(dataset[dataset[column] == cat])})", 
+                aos[-1].text(xstart -0.02, 0, r"$\bf{" + str(cat) + "}$" + f"\n(n = {len(dataset[dataset[column] == cat])})", 
                 fontsize=8, ha="right", color=colors[i])
 
             if(cat == categories[-1]):
@@ -54,6 +55,8 @@ def plot(dataset: pd.DataFrame, categories: list[str], column: str,
                 aos[-1].set_xticks([])
 
             i += 1
-    gs.update(hspace=-0.7)
+    hspace = -.6
+    if i > 10 : hspace = -.45
+    gs.update(hspace=hspace)
     plt.tight_layout()
     return fig, aos

@@ -126,4 +126,4 @@ def df_periodic_table() -> pd.DataFrame:
 
 m3d = ["Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn"]
 m4d = ["Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd"]
-m5d = ["La", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]
+m5d = ["Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg"]
